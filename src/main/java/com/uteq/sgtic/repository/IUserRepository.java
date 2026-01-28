@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface IUserRepository extends JpaRepository<User, Integer> {
     @Procedure(procedureName = "sp_crear_usuario")
@@ -16,4 +18,5 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
             String p_apellidos,
             String p_correo
     );
+    Optional<User> findByEmail(String email);
 }
