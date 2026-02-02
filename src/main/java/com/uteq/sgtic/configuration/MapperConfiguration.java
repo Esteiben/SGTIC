@@ -2,8 +2,8 @@ package com.uteq.sgtic.configuration;
 
 import com.uteq.sgtic.dtos.WorkProposalDto;
 import com.uteq.sgtic.entities.WorkProposal;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,31 +19,32 @@ public class MapperConfiguration {
     public ModelMapper workProposalMapper() {
         ModelMapper mapper = new ModelMapper();
 
-        PropertyMap<WorkProposal, WorkProposalDto> entityToDto = new PropertyMap<>() {
-            @Override
-            protected void configure() {
-                map().setIdProposal(source.getIdProposal());
-                map().setIdStudent(source.getStudent() != null ? source.getStudent().getIdStudent() : null);
-                map().setTitle(source.getTitle());
-                map().setDescription(source.getDescription());
-                map().setRegistrationDate(source.getRegistrationDate());
-                map().setStatus(source.getStatus());
-            }
+        Converter<WorkProposal, WorkProposalDto> toDto = context -> {
+            WorkProposal source = context.getSource();
+            if (source == null) return null;
+            WorkProposalDto dto = new WorkProposalDto();
+            dto.setIdProposal(source.getIdProposal());
+            dto.setIdStudent(source.getStudent() != null ? source.getStudent().getIdStudent() : null);
+            dto.setTitle(source.getTitle());
+            dto.setDescription(source.getDescription());
+            dto.setRegistrationDate(source.getRegistrationDate());
+            dto.setStatus(source.getStatus());
+            return dto;
         };
 
-        PropertyMap<WorkProposalDto, WorkProposal> dtoToEntity = new PropertyMap<>() {
-            @Override
-            protected void configure() {
-                // For now only map simple fields; student needs to be set by service/controller if needed
-                map().setTitle(source.getTitle());
-                map().setDescription(source.getDescription());
-                map().setRegistrationDate(source.getRegistrationDate());
-                map().setStatus(source.getStatus());
-            }
+        Converter<WorkProposalDto, WorkProposal> toEntity = context -> {
+            WorkProposalDto source = context.getSource();
+            if (source == null) return null;
+            WorkProposal entity = new WorkProposal();
+            entity.setTitle(source.getTitle());
+            entity.setDescription(source.getDescription());
+            entity.setRegistrationDate(source.getRegistrationDate());
+            entity.setStatus(source.getStatus());
+            return entity;
         };
 
-        mapper.addMappings(entityToDto);
-        mapper.addMappings(dtoToEntity);
+        mapper.addConverter(toDto, WorkProposal.class, WorkProposalDto.class);
+        mapper.addConverter(toEntity, WorkProposalDto.class, WorkProposal.class);
 
         return mapper;
     }
