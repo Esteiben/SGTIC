@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -12,20 +9,19 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommitteeMember {
+public class CommissionMember {
 
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_comision")
-    private ResearchCommittee committee;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_comision", nullable = false)
+    private Commission commission;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_docente")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_docente", nullable = false)
     private Teacher teacher;
 
     @Column(name = "rol", nullable = false, length = 20)

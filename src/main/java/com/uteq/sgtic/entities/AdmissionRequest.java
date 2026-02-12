@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -17,8 +14,8 @@ import java.time.LocalDate;
 public class AdmissionRequest {
 
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     @Column(name = "id_solicitud")
     private Integer idRequest;
 
@@ -34,16 +31,17 @@ public class AdmissionRequest {
     @Column(name = "correo", nullable = false, length = 150)
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_carrera", nullable = false)
     private Career career;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_periodo", nullable = false)
+    private AcademicPeriod academicPeriod;
 
     @Column(name = "fecha_envio", nullable = false)
     private LocalDate sentDate;
 
     @Column(name = "estado", nullable = false, length = 20)
     private String status;
-
-    @Column(name = "observaciones", columnDefinition = "TEXT")
-    private String observations;
 }

@@ -1,30 +1,25 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
 @Table(name = "docente_carrera")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class TeacherCareer {
 
     @EmbeddedId
-    @EqualsAndHashCode.Include
     private TeacherCareerId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idDocente")
+    @ManyToOne
+    @MapsId("idTeacher")
     @JoinColumn(name = "id_docente")
     private Teacher teacher;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idCarrera")
+    @ManyToOne
+    @MapsId("idCareer")
     @JoinColumn(name = "id_carrera")
     private Career career;
 }

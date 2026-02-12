@@ -5,22 +5,21 @@ import lombok.*;
 
 @Data
 @Entity
-@Table(name = "carrera")
+@Table(name = "opcion_titulacion")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Career {
+public class DegreeOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Column(name = "id_carrera")
-    private Integer idCareer;
+    @Column(name = "id_opcion")
+    private Integer idOption;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_facultad", nullable = false)
-    private Faculty faculty;
-
-    @Column(name = "nombre", nullable = false, length = 150)
+    @Column(name = "nombre", nullable = false, unique = true, length = 100)
     private String name;
+
+    @Column(name = "activo", nullable = false)
+    private Boolean active;
 }

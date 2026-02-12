@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -23,6 +20,6 @@ public class Faculty {
     @Column(name = "nombre", nullable = false, unique = true, length = 150)
     private String name;
 
-    @Column(name = "activa", nullable = false)
-    private Boolean active;
+    @Column(name = "siglas", nullable = false, unique = true, length = 10)
+    private String acronym;
 }

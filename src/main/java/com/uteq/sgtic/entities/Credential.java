@@ -5,22 +5,25 @@ import lombok.*;
 
 @Data
 @Entity
-@Table(name = "docente")
+@Table(name = "credencial")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Teacher {
+public class Credential {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Column(name = "id_docente")
-    private Integer idTeacher;
+    @Column(name = "id_credencial")
+    private Integer idCredential;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "id_usuario", nullable = false, unique = true)
     private User user;
 
-    @Column(name = "estado", nullable = false, length = 20)
-    private String status;
+    @Column(name = "username", nullable = false, unique = true, length = 50)
+    private String username;
+
+    @Column(name = "password_hash", nullable = false, columnDefinition = "TEXT")
+    private String passwordHash;
 }
