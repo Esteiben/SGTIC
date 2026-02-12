@@ -21,7 +21,6 @@ public abstract class CrudImpl<T, ID> implements ICrud<T, ID> {
 
     @Override
     public T delete(ID id) throws Exception {
-        // Per instructions, do not delete yet; return a reference
         return getRepository().getReferenceById(id);
     }
 

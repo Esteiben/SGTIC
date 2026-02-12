@@ -5,21 +5,20 @@ import lombok.*;
 
 @Data
 @Entity
-@Table(name = "estudiante")
+@Table(name = "comision")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student {
+public class Commission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Column(name = "id_estudiante")
-    private Integer idStudent;
+    @Column(name = "id_comision")
+    private Integer idCommission;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
-    private User user;
+    @Column(name = "nombre", nullable = false, length = 150)
+    private String name;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_carrera", nullable = false)
@@ -29,6 +28,9 @@ public class Student {
     @JoinColumn(name = "id_periodo", nullable = false)
     private AcademicPeriod academicPeriod;
 
-    @Column(name = "estado_titulacion", nullable = false, length = 20)
-    private String degreeStatus;
+    @Column(name = "tipo", nullable = false, length = 30)
+    private String type;
+
+    @Column(name = "activa", nullable = false)
+    private Boolean active;
 }

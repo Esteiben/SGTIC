@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -15,26 +12,15 @@ import lombok.NoArgsConstructor;
 public class UserRole {
 
     @EmbeddedId
-    @EqualsAndHashCode.Include
     private UserRoleId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idUsuario")
-    @JoinColumn(name = "id_usuario", nullable = false)
+    @ManyToOne
+    @MapsId("idUser")
+    @JoinColumn(name = "id_usuario")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idRol")
-    @JoinColumn(name = "id_rol", nullable = false)
+    @ManyToOne
+    @MapsId("idRole")
+    @JoinColumn(name = "id_rol")
     private Role role;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idFacultad")
-    @JoinColumn(name = "id_facultad")
-    private Faculty faculty;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("idCarrera")
-    @JoinColumn(name = "id_carrera")
-    private Career career;
 }

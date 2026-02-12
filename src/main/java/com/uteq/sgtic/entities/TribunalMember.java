@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -15,17 +12,16 @@ import lombok.NoArgsConstructor;
 public class TribunalMember {
 
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tribunal")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_tribunal", nullable = false)
     private Tribunal tribunal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_docente")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_docente", nullable = false)
     private Teacher teacher;
 
     @Column(name = "rol", nullable = false, length = 20)

@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -17,25 +14,24 @@ import java.time.LocalDate;
 public class DirectorAssignment {
 
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_asignacion")
-    private Integer idAssignment;
+    @EqualsAndHashCode.Include
+    private Integer id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_propuesta", unique = true)
-    private WorkProposal proposal;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "id_propuesta", nullable = false, unique = true)
+    private WorkProposal workProposal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_docente")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_docente", nullable = false)
     private Teacher teacher;
 
-    @Column(name = "decision", nullable = false, length = 15)
-    private String decision;
+    @Column(name = "fecha_asignacion", nullable = false)
+    private LocalDate assignmentDate;
+
+    @Column(name = "respuesta", nullable = false, length = 20)
+    private String response;
 
     @Column(name = "observaciones", columnDefinition = "TEXT")
     private String observations;
-
-    @Column(name = "fecha_decision", nullable = false)
-    private LocalDate decisionDate;
 }

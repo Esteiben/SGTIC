@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -17,15 +14,19 @@ import java.time.LocalDate;
 public class Tribunal {
 
     @Id
-    @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     @Column(name = "id_tribunal")
     private Integer idTribunal;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_trabajo", unique = true)
-    private GraduationWork trabajo;
+    @OneToOne(optional = false)
+    @JoinColumn(name = "id_trabajo", nullable = false, unique = true)
+    private DegreeWork degreeWork;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_periodo", nullable = false)
+    private AcademicPeriod academicPeriod;
 
     @Column(name = "fecha_asignacion", nullable = false)
-    private LocalDate assignedDate;
+    private LocalDate assignmentDate;
 }

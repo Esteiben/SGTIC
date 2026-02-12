@@ -1,10 +1,7 @@
 package com.uteq.sgtic.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -15,8 +12,8 @@ import java.io.Serializable;
 public class TeacherCareerId implements Serializable {
 
     @Column(name = "id_docente")
-    private Integer idDocente;
+    private Integer idTeacher;
 
     @Column(name = "id_carrera")
-    private Integer idCarrera;
+    private Integer idCareer;
 }
