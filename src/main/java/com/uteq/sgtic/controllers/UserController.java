@@ -1,6 +1,5 @@
 package com.uteq.sgtic.controllers;
 
-import com.uteq.sgtic.dtos.UserCreateSimpleDTO;
 import com.uteq.sgtic.dtos.UserResponseDTO;
 import com.uteq.sgtic.entities.User;
 import com.uteq.sgtic.repository.UserRepository;
@@ -33,27 +32,10 @@ public class UserController {
                 .map(u -> ResponseEntity.ok(toResponse(u)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-    @PostMapping("/users")
-    public ResponseEntity<UserResponseDTO> create(@RequestBody UserCreateSimpleDTO dto) {
-        User user = new User();
-        user.setIdentification(dto.getIdentification());
-        user.setUsername(dto.getUsername());
-        user.setPasswordHash(dto.getPassword());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setActive(dto.getActive() != null ? dto.getActive() : true);
-
-        User saved = userRepository.save(user);
-        return ResponseEntity.status(201).body(toResponse(saved));
-    }
-
     private UserResponseDTO toResponse(User u) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setIdUser(u.getIdUser());
         dto.setIdentification(u.getIdentification());
-        dto.setUsername(u.getUsername());
         dto.setFirstName(u.getFirstName());
         dto.setLastName(u.getLastName());
         dto.setEmail(u.getEmail());

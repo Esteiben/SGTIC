@@ -1,13 +1,12 @@
 package com.uteq.sgtic.dtos;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@Builder
+@AllArgsConstructor
 public class LoginResponseDTO {
-    private String token;
     private Integer idUser;
-    private String username;
     private String email;
+    private String fullName;
 }

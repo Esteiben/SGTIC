@@ -19,7 +19,7 @@ public class Credential {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "id_usuario", nullable = false, unique = true)
-    private User user;
+    private User idUser;
 
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
