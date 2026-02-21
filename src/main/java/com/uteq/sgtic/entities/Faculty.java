@@ -2,6 +2,7 @@ package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,4 +23,10 @@ public class Faculty {
 
     @Column(name = "siglas", nullable = false, unique = true, length = 10)
     private String acronym;
+
+    @Column(name = "activa")
+    private Boolean active;
+
+     @OneToMany(mappedBy = "faculty", fetch = FetchType.EAGER)
+    private List<Career> careers;
 }

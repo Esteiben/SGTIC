@@ -1,9 +1,10 @@
-package com.uteq.sgtic.dtos;
+package com.uteq.sgtic.dtos.institutionalstructure;
 
 import lombok.Data;
 
 @Data
+
 public class FacultyCreateDTO {
     private String name;
-    private Boolean active;
+    private String acronym;
 }

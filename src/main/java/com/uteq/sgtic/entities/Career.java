@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Career {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
@@ -23,4 +22,7 @@ public class Career {
 
     @Column(name = "nombre", nullable = false, length = 150)
     private String name;
+
+    @Column(name = "activa")
+    private Boolean active;
 }
