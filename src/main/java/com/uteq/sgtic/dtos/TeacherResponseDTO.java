@@ -4,6 +4,12 @@ import lombok.Data;
 
 @Data
 public class TeacherResponseDTO {
+
     private Integer idTeacher;
-    private Integer idUser;
+    private String fullName;
+    private String email;
+    private String degree;
+    private Boolean isResearcher;
+    private String contract;
+    private Integer workload;
 }

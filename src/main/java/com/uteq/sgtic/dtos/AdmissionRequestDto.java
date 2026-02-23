@@ -1,5 +1,4 @@
 package com.uteq.sgtic.dtos;
-
 import lombok.Data;
 import java.time.LocalDate;
 

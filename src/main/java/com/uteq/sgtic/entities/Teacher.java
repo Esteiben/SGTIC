@@ -20,7 +20,13 @@ public class Teacher {
     @Column(name = "id_docente")
     private Integer idTeacher;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "id_usuario", unique = true)
     private User user;
+
+    @Column(name = "titulo_cuarto_nivel", length = 200)
+    private String degree;
+
+    @Column(name = "es_investigador")
+    private Boolean isResearcher;
 }
