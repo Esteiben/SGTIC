@@ -31,6 +31,11 @@ public class AdmissionRequest {
     @Column(name = "correo", nullable = false, length = 150)
     private String email;
 
+    //Esto es nuevo para el registro
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_facultad", nullable = false)
+    private Faculty faculty;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_carrera", nullable = false)
     private Career career;

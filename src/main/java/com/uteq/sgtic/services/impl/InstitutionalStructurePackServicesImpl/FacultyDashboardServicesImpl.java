@@ -23,7 +23,7 @@ public class FacultyDashboardServicesImpl implements IFacultyDashboardServices {
             .map(faculty -> {
                 FacultyDashboardDTO dto = new FacultyDashboardDTO();
 
-                dto.setId(faculty.getIdFaculty()); // Asegúrate de que el getter coincida con tu entity
+                dto.setId(faculty.getIdFaculty());
                 dto.setName(faculty.getName());
                 dto.setSubtitle(faculty.getAcronym());
 
@@ -35,7 +35,7 @@ public class FacultyDashboardServicesImpl implements IFacultyDashboardServices {
                 if(faculty.getCareers() != null){
                     List<CareerDisplayDTO> mappedCareers = faculty.getCareers().stream()
                         .map(career -> new CareerDisplayDTO(
-                            career.getIdCareer(), // Asegúrate de usar el getter correcto (ej. getId() o getIdCareer())
+                            career.getIdCareer(),
                             career.getName(),
                             career.getActive() != null ? career.getActive() : true
                         ))

@@ -28,6 +28,9 @@ public class AcademicPeriod {
     @Column(name = "fecha_fin", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
     private LocalDate endDate;
 
+    @Column(name = "fecha_limite_matriculacion", nullable = false)
+    private LocalDate enrollmentDeadline;
+
     @Column(name = "activo", nullable = false)
     private Boolean active;
 }
