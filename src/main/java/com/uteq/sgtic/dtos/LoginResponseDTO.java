@@ -3,10 +3,23 @@ package com.uteq.sgtic.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class LoginResponseDTO {
-    private Integer idUser;
+    private String token;
     private String email;
     private String fullName;
+    private List<String> roles;
+    private UserContext context;
+
+    @Data
+    @AllArgsConstructor
+    public static class UserContext {
+        private Integer idFaculty;
+        private Integer idCareer;
+        private Integer idTeacher;
+        private Integer idStudent;
+    }
 }
