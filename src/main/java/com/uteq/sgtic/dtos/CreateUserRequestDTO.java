@@ -1,13 +1,15 @@
 package com.uteq.sgtic.dtos;
 
 import lombok.Data;
+import java.util.List;
 
 @Data
-public class UserCreateDTO {
+public class CreateUserRequestDTO {
     private String identification;
-    private String username;
-    private String password;
     private String firstName;
     private String lastName;
     private String email;
+    private String username;
+    private String password;
+    private List<Integer> roleIds;
 }

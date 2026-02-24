@@ -3,27 +3,26 @@ package com.uteq.sgtic.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+
 @Entity
 @Table(name = "credencial")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Credential {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     @Column(name = "id_credencial")
-    private Integer idCredential;
+    private Integer id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "id_usuario", nullable = false, unique = true)
-    private User idUser;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", unique = true, nullable = false)
+    private User user;
 
-    @Column(name = "username", nullable = false, unique = true, length = 50)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password_hash", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "password_hash",columnDefinition = "TEXT", nullable = false)
     private String passwordHash;
 }

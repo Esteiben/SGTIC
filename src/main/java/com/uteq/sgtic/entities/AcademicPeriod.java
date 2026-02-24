@@ -22,7 +22,7 @@ public class AcademicPeriod {
     @Column(name = "nombre", nullable = false, unique = true, length = 50)
     private String name;
 
-    @Column(name = "fecha_inicio", nullable = false)
+    @Column(name = "fecha_inicio", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
     private LocalDate startDate;
 
     @Column(name = "fecha_fin", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)

@@ -3,20 +3,18 @@ package com.uteq.sgtic.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
 @Entity
 @Table(name = "rol")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Role {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     @Column(name = "id_rol")
-    private Integer idRole;
+    private Integer id;
 
-    @Column(name = "nombre", nullable = false, unique = true, length = 50)
+    @Column(name = "nombre", unique = true, nullable = false)
     private String name;
 }

@@ -1,38 +1,91 @@
 package com.uteq.sgtic.services.impl;
 
+import com.uteq.sgtic.config.security.JwtService;
+import com.uteq.sgtic.config.security.UserDetailsServiceImpl;
 import com.uteq.sgtic.dtos.LoginRequestDTO;
 import com.uteq.sgtic.dtos.LoginResponseDTO;
-import com.uteq.sgtic.entities.Credential;
-import com.uteq.sgtic.entities.User;
-import com.uteq.sgtic.repository.CredentialRepository;
+import com.uteq.sgtic.repository.RoleRepository;
+import com.uteq.sgtic.repository.UserContextRepository;
 import com.uteq.sgtic.repository.UserRepository;
 import com.uteq.sgtic.services.IAuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
-    private final CredentialRepository credentialRepository;
+    private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService; // CAMBIAR: Usar interfaz, no impl
+    private final JwtService jwtService;
+    private final RoleRepository roleRepository;
+    private final UserContextRepository userContextRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public LoginResponseDTO login(LoginRequestDTO request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!Boolean.TRUE.equals(user.getActive())){
-            throw new RuntimeException("User not active");
+    public LoginResponseDTO authenticate(LoginRequestDTO request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        UserRepository.UserCredentialsProjection userData = userRepository
+                .findCredentialsByEmail(request.getEmail())
+                .orElseThrow();
+
+        Integer userId = userData.getUserId();
+        List<String> roles = roleRepository.findRoleNamesByUserId(userId);
+
+        UserContextRepository.UserContextProjection context =
+                userContextRepository.findUserContext(userId);
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("roles", roles);
+        extraClaims.put("userId", userId);
+        extraClaims.put("fullName", userData.getFirstName() + " " + userData.getLastName());
+
+        if (context.getIdFaculty() != null) {
+            extraClaims.put("idFaculty", context.getIdFaculty());
         }
-        Credential creddential = credentialRepository.findByIdUser(user.getIdUser())
-                .orElseThrow(() -> new RuntimeException("Credential not found"));
-        if (!creddential.getPasswordHash().equals(request.getPassword())){
-            throw new RuntimeException("Password not match");
+        if (context.getIdCareer() != null) {
+            extraClaims.put("idCareer", context.getIdCareer());
         }
+        if (context.getIdTeacher() != null) {
+            extraClaims.put("idTeacher", context.getIdTeacher());
+        }
+        if (context.getIdStudent() != null) {
+            extraClaims.put("idStudent", context.getIdStudent());
+        }
+
+        String jwtToken = jwtService.generateToken(userDetails, extraClaims);
+
+        LoginResponseDTO.UserContext responseContext = new LoginResponseDTO.UserContext(
+                context.getIdFaculty(),
+                context.getIdCareer(),
+                context.getIdTeacher(),
+                context.getIdStudent()
+        );
+
         return new LoginResponseDTO(
-                user.getIdUser(),
-                user.getEmail(),
-                user.getFirstName() + ' ' + user.getLastName()
+                jwtToken,
+                userData.getEmail(),
+                userData.getFirstName() + " " + userData.getLastName(),
+                roles,
+                responseContext
         );
     }
 }
