@@ -12,4 +12,6 @@ public class CreateUserRequestDTO {
     private String username;
     private String password;
     private List<Integer> roleIds;
+    private Integer idCareer;
+    private Integer idPeriod;
 }

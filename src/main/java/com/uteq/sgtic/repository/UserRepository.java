@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "SELECT * FROM sp_find_user_credentials_by_email(:email)", nativeQuery = true)
     Optional<UserCredentialsProjection> findCredentialsByEmail(@Param("email") String email);
 
-    // Interfaz para mapear resultado del SP
+    // Mapear resultado del SP
     interface UserCredentialsProjection {
         Integer getUserId();
         String getFirstName();

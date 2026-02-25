@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface UserManagementRepository extends JpaRepository<com.uteq.sgtic.entities.User, Integer> {
 
-    @Query(value = "SELECT * FROM sp_create_user_complete(:ident, :nombres, :apellidos, :correo, :username, :passHash, :roles)",
+    @Query(value = "SELECT * FROM sp_create_user_complete(:ident, :nombres, :apellidos, :correo, :username, :passHash, :roles, :idCareer, :idPeriod)",
             nativeQuery = true)
     CreationResult createUserComplete(
             @Param("ident") String identification,
@@ -19,18 +19,18 @@ public interface UserManagementRepository extends JpaRepository<com.uteq.sgtic.e
             @Param("correo") String email,
             @Param("username") String username,
             @Param("passHash") String passwordHash,
-            @Param("roles") Integer[] roles  // Array de integers para PostgreSQL
+            @Param("roles") Integer[] roles,
+            @Param("idCareer") Integer idCareer,
+            @Param("idPeriod") Integer idPeriod
     );
 
-    // Obtener todos los usuarios con SP
     @Query(value = "SELECT * FROM sp_get_all_users()", nativeQuery = true)
     List<UserProjection> getAllUsersWithRoles();
 
-    // Obtener roles disponibles
     @Query(value = "SELECT * FROM sp_get_available_roles()", nativeQuery = true)
     List<RoleProjection> getAvailableRoles();
 
-    // Proyecciones para los resultados de SPs
+    // Resultados de SPs
     interface CreationResult {
         Integer getUserId();
         Boolean getSuccess();

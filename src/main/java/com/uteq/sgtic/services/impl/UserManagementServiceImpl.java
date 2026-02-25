@@ -27,7 +27,7 @@ public class UserManagementServiceImpl implements IUserManagementService {
     @Transactional
     public UserCreationResult createUser(CreateUserRequestDTO request) {
         try {
-            // Validaciones manuales (sin Jakarta Validation)
+            // Validaciones Básicas
             if (!StringUtils.hasText(request.getIdentification())) {
                 return new UserCreationResult(false, null, "La identificación es obligatoria");
             }
@@ -50,13 +50,21 @@ public class UserManagementServiceImpl implements IUserManagementService {
                 return new UserCreationResult(false, null, "Debe asignar al menos un rol");
             }
 
-            // Hashear contraseña
+            List<RoleDTO> availableRoles = getAvailableRoles();
+
+            boolean hasStudentRole = request.getRoleIds().stream().anyMatch(roleId ->
+                    availableRoles.stream().anyMatch(r -> r.getId().equals(roleId) && "estudiante".equalsIgnoreCase(r.getName()))
+            );
+
+            if (hasStudentRole && (request.getIdCareer() == null || request.getIdPeriod() == null)) {
+                return new UserCreationResult(false, null,
+                        "Para crear un estudiante debe especificar la carrera y el período académico");
+            }
+
             String hashedPassword = passwordEncoder.encode(request.getPassword());
 
-            // Convertir lista de roles a array para PostgreSQL
             Integer[] rolesArray = request.getRoleIds().toArray(new Integer[0]);
 
-            // Llamar al SP
             UserManagementRepository.CreationResult result = userRepository.createUserComplete(
                     request.getIdentification(),
                     request.getFirstName(),
@@ -64,10 +72,12 @@ public class UserManagementServiceImpl implements IUserManagementService {
                     request.getEmail(),
                     request.getUsername(),
                     hashedPassword,
-                    rolesArray
+                    rolesArray,
+                    request.getIdCareer(),
+                    request.getIdPeriod()
             );
 
-            // Verificar resultado
+            // Respuesta
             if (Boolean.TRUE.equals(result.getSuccess())) {
                 log.info("Usuario creado exitosamente con ID: {}", result.getUserId());
                 return new UserCreationResult(true, result.getUserId(), "Usuario creado exitosamente");
@@ -120,7 +130,41 @@ public class UserManagementServiceImpl implements IUserManagementService {
         if (rolesObject instanceof List) {
             return (List<String>) rolesObject;
         }
-
         return List.of(rolesObject.toString());
+    }
+
+    private String validateRoleCombination(List<Integer> roleIds, List<RoleDTO> availableRoles) {
+        // Obtener nombres de roles seleccionados
+        List<String> selectedRoleNames = availableRoles.stream()
+                .filter(r -> roleIds.contains(r.getId()))
+                .map(RoleDTO::getName)
+                .collect(Collectors.toList());
+        // Regla 1: Si es estudiante, no puede tener roles administrativos
+        if (selectedRoleNames.contains("estudiante")) {
+            List<String> invalidRoles = selectedRoleNames.stream()
+                    .filter(r -> !r.equals("estudiante"))
+                    .filter(r -> r.contains("admin") || r.contains("coordinador")
+                            || r.contains("docente") || r.contains("director")
+                            || r.contains("miembro"))
+                    .collect(Collectors.toList());
+
+            if (!invalidRoles.isEmpty()) {
+                return "Un estudiante no puede tener roles administrativos o docentes";
+            }
+        }
+        // Regla 2: Si tiene rol de comisión/tribunal, debe ser docente
+        boolean hasCommissionRole = selectedRoleNames.stream()
+                .anyMatch(r -> r.contains("miembro") || r.contains("comision"));
+        boolean isTeacher = selectedRoleNames.contains("docente");
+
+        if (hasCommissionRole && !isTeacher) {
+            return "Los miembros de comisiones y tribunales deben ser docentes";
+        }
+        // Regla 3: Si es director, debe ser docente
+        if (selectedRoleNames.contains("director_trabajo_titulacion") && !isTeacher) {
+            return "El director de trabajo debe ser docente";
+        }
+
+        return null;
     }
 }
