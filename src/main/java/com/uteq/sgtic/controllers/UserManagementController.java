@@ -21,13 +21,9 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 
 public class UserManagementController {
-    // Inyección de la interfaz, no de la implementación
+
     private final IUserManagementService userService;
 
-    /**
-     * POST /api/admin/users
-     * Crear nuevo usuario (solo Admin)
-     */
     @PostMapping
     @PreAuthorize("hasAuthority('administrador_sgtic')")
     public ResponseEntity<?> createUser(@RequestBody CreateUserRequestDTO request) {
@@ -53,10 +49,6 @@ public class UserManagementController {
         }
     }
 
-    /**
-     * GET /api/admin/users
-     * Listar todos los usuarios (solo Admin)
-     */
     @GetMapping
     @PreAuthorize("hasAuthority('administrador_sgtic')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
@@ -64,10 +56,6 @@ public class UserManagementController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    /**
-     * GET /api/admin/users/roles
-     * Obtener roles disponibles para el formulario
-     */
     @GetMapping("/roles")
     @PreAuthorize("hasAuthority('administrador_sgtic')")
     public ResponseEntity<List<RoleDTO>> getAvailableRoles() {

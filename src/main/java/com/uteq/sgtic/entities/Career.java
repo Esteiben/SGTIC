@@ -23,6 +23,6 @@ public class Career {
     @Column(name = "nombre", nullable = false, length = 150)
     private String name;
 
-    @Column(name = "activa")
-    private Boolean active;
+    @Column(name = "activa", nullable = false)
+    private Boolean active = true;
 }
