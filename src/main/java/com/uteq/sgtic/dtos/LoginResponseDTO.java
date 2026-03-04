@@ -14,6 +14,8 @@ public class LoginResponseDTO {
     private List<String> roles;
     private UserContext context;
 
+    private Boolean primerIngreso;
+
     @Data
     @AllArgsConstructor
     public static class UserContext {

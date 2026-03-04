@@ -39,9 +39,11 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/public/request-access/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/solicitudes/**").permitAll()
+                        .requestMatchers("/api/public/selection/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
                         .requestMatchers("/api/coordinator/faculty/**").hasAnyAuthority(
                                 "administrador_sgtic", "coordinador_facultad")
@@ -90,7 +92,7 @@ public class SecurityConfig {
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/api/**", configuration);
         return source;
     }
 }

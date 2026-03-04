@@ -30,6 +30,9 @@ public class User {
     @Column(name = "activo", nullable = false)
     private Boolean active;
 
+    @Column(name = "primer_ingreso")
+    private Boolean primerIngreso;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Credential credential;
 
