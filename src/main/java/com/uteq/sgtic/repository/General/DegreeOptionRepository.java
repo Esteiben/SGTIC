@@ -1,0 +1,14 @@
+package com.uteq.sgtic.repository.General;
+
+import com.uteq.sgtic.entities.DegreeOption;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+
+@Repository
+public interface DegreeOptionRepository extends JpaRepository<DegreeOption, Integer>{
+    @Query(value = "SELECT * FROM v_opcion_titulacion_activa", nativeQuery = true)
+    List<DegreeOption> findAllActiveFromView();
+}

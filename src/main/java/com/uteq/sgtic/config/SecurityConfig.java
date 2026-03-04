@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,8 +41,8 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
-//                        .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
-                        .requestMatchers("/api/admin/**").permitAll()  // ← CAMBIAR TEMPORALMENTE
+                        .requestMatchers("/api/solicitudes/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
                         .requestMatchers("/api/coordinator/faculty/**").hasAnyAuthority(
                                 "administrador_sgtic", "coordinador_facultad")
                         .requestMatchers("/api/coordinator/career/**").hasAnyAuthority(
@@ -63,15 +62,10 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-   @Bean
-   public PasswordEncoder passwordEncoder() {
-       return new BCryptPasswordEncoder();
-   }
-
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//    }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

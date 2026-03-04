@@ -49,4 +49,10 @@ public class AdmissionRequest {
 
     @Column(name = "estado", nullable = false, length = 20)
     private String status;
+
+    @Column(name = "observaciones", columnDefinition = "TEXT")
+    private String observations;
+
+    @Column(name = "fecha_respuesta")
+    private LocalDate responseDate;
 }
