@@ -5,4 +5,5 @@ import com.uteq.sgtic.dtos.LoginResponseDTO;
 
 public interface IAuthService {
     LoginResponseDTO authenticate(LoginRequestDTO request);
+    boolean changeFirstPassword(Integer userId, String newPassword);
 }

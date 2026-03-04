@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.uteq.sgtic.entities.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -80,12 +81,33 @@ public class AuthServiceImpl implements IAuthService {
                 context.getIdStudent()
         );
 
+        
+
+        Boolean esPrimerIngreso = userRepository.findById(userId)
+                .map(User::getPrimerIngreso)
+                .orElse(true);
+
         return new LoginResponseDTO(
                 jwtToken,
                 userData.getEmail(),
                 userData.getFirstName() + " " + userData.getLastName(),
                 roles,
-                responseContext
+                responseContext,
+                esPrimerIngreso
         );
+    }
+
+    public boolean changeFirstPassword(Integer userId, String newPassword) {
+        // 1. Spring Boot encripta la clave con Bcrypt (costo 10 automático)
+        String newHash = passwordEncoder.encode(newPassword);
+
+        // 2. Mandamos el hash al Stored Procedure
+        Boolean success = userRepository.updatePasswordSp(userId, newHash);
+        
+        if (success == null || !success) {
+            throw new RuntimeException("Error al actualizar la contraseña en la base de datos");
+        }
+        
+        return true;
     }
 }
