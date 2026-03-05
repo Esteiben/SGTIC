@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/solicitudes/**").permitAll()
+                        .requestMatchers("/api/admin/catalog/**").permitAll()
                         .requestMatchers("/api/public/selection/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
                         .requestMatchers("/api/coordinator/faculty/**").hasAnyAuthority(

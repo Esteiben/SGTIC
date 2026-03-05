@@ -12,5 +12,4 @@ public class SgticApplication {
     public static void main(String[] args) {
         SpringApplication.run(SgticApplication.class, args);
     }
-
 }
