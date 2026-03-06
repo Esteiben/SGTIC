@@ -19,40 +19,32 @@ public class AdmissionRequest {
     @Column(name = "id_solicitud")
     private Integer idRequest;
 
-    @Column(name = "identificacion", nullable = false, length = 20)
+    @Column(name = "identificacion")
     private String identification;
 
-    @Column(name = "nombres", nullable = false, length = 100)
+    @Column(name = "nombres")
     private String firstName;
 
-    @Column(name = "apellidos", nullable = false, length = 100)
+    @Column(name = "apellidos")
     private String lastName;
 
-    @Column(name = "correo", nullable = false, length = 150)
+    @Column(name = "correo")
     private String email;
 
-    //Esto es nuevo para el registro
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_facultad", nullable = false)
-    private Faculty faculty;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_carrera", nullable = false)
-    private Career career;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_periodo", nullable = false)
-    private AcademicPeriod academicPeriod;
-
-    @Column(name = "fecha_envio", nullable = false)
-    private LocalDate sentDate;
-
-    @Column(name = "estado", nullable = false, length = 20)
+    @Column(name = "estado")
     private String status;
 
-    @Column(name = "observaciones", columnDefinition = "TEXT")
+    @Column(name = "observaciones")
     private String observations;
 
     @Column(name = "fecha_respuesta")
     private LocalDate responseDate;
+
+    @ManyToOne
+    @JoinColumn(name = "id_carrera")
+    private Career career;
+
+    @ManyToOne
+    @JoinColumn(name = "id_periodo")
+    private AcademicPeriod academicPeriod;
 }

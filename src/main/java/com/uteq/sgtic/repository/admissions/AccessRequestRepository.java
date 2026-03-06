@@ -13,21 +13,22 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface AccessRequestRepository extends  JpaRepository<AdmissionRequest, Integer>{
+public interface AccessRequestRepository extends JpaRepository<AdmissionRequest, Integer> {
+
     long countByStatus(String status);
 
-    @Query(value = "SELECT * FROM public.fn_listar_solicitudes(:idCarrera)", nativeQuery = true)
-    List<RequestManagementCoordinatorProjection> listarParaCoordinador(@Param("idCarrera") Integer idCarrera);
+    @Query(value = "SELECT * FROM public.fn_listar_solicitudes(:idUsuario)", nativeQuery = true)
+    List<RequestManagementCoordinatorProjection> listarSolicitudesPorCarrera(@Param("idUsuario") Integer idUsuario);
 
     @Modifying
     @Transactional
-    @Query(value = "CALL public.sp_aprobar_solicitud(:idSolicitud)", nativeQuery = true)
-    void aprobarSolicitud(@Param("idSolicitud") Integer idSolicitud);
+    @Query(value = "CALL public.sp_aprobar_solicitud(:idRequest, :claveTemp)", nativeQuery = true)
+    void aprobarSolicitud(@Param("idRequest") Integer idRequest, @Param("claveTemp") String claveTemp);
 
     @Modifying
     @Transactional
-    @Query(value = "CALL public.sp_rechazar_solicitud(:idSolicitud, :motivo)", nativeQuery = true)
-    void rechazarSolicitud(@Param("idSolicitud") Integer idSolicitud, @Param("motivo") String motivo);
+    @Query(value = "CALL public.sp_rechazar_solicitud(:idRequest, :motivo)", nativeQuery = true)
+    void rechazarSolicitud(@Param("idRequest") Integer idRequest, @Param("motivo") String motivo);
 
     @Query(value = "SELECT * FROM public.fn_buscar_solicitudes_atrasadas()", nativeQuery = true)
     List<PendingAlertProjection> buscarSolicitudesAtrasadas();

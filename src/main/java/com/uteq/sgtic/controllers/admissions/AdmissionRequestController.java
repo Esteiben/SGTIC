@@ -14,40 +14,39 @@ import java.util.Map;
 @RequestMapping("/api/solicitudes")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AdmissionRequestController {
+
     @Autowired
     private IAdmissionRequestService service;
 
-    @GetMapping
-    public ResponseEntity<List<AdmissionRequest>> listarTodas() {
-        try {
-            return ResponseEntity.ok(service.findAll());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/coordinador/facultad/{idFacultad}")
-    public ResponseEntity<List<RequestManagementCoordinatorProjection>> obtenerSolicitudesCoordinador(@PathVariable Integer idFacultad) {
-        return ResponseEntity.ok(service.listarParaCoordinador(idFacultad));
+    @GetMapping("/coordinador/{idUsuario}")
+    public ResponseEntity<List<RequestManagementCoordinatorProjection>> obtenerSolicitudesCoordinador(@PathVariable Integer idUsuario) {
+        return ResponseEntity.ok(service.listarParaCoordinador(idUsuario));
     }
 
     @PutMapping("/aprobar/{id}")
-    public ResponseEntity<?> aprobarSolicitud(@PathVariable Integer id) {
+    public ResponseEntity<?> aprobarSolicitud(@PathVariable("id") Integer id) { // Aseguramos el mapeo del ID
         try {
             service.aprobarSolicitud(id);
-            return ResponseEntity.ok(Map.of("mensaje", "Solicitud aprobada con éxito"));
+            return ResponseEntity.ok(Map.of("mensaje", "Solicitud aprobada: Credenciales enviadas al estudiante"));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
     @PutMapping("/rechazar/{id}")
-    public ResponseEntity<?> rechazarSolicitud(@PathVariable Integer id, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<?> rechazarSolicitud(@PathVariable("id") Integer id, @RequestBody Map<String, String> requestBody) {
         try {
             String motivo = requestBody.get("motivo");
+
+            if (motivo == null || motivo.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Debe proporcionar un motivo para el rechazo"));
+            }
+
             service.rechazarSolicitud(id, motivo);
-            return ResponseEntity.ok(Map.of("mensaje", "Solicitud rechazada y correo enviado"));
+            return ResponseEntity.ok(Map.of("mensaje", "Solicitud rechazada: Motivo enviado por correo"));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }

@@ -1,21 +1,22 @@
 package com.uteq.sgtic.services.impl.admissionsImpl;
 
 import com.uteq.sgtic.entities.AdmissionRequest;
-
 import com.uteq.sgtic.projections.admissions.RequestManagementCoordinatorProjection;
 import com.uteq.sgtic.repository.admissions.AccessRequestRepository;
 import com.uteq.sgtic.services.admissions.IAdmissionRequestService;
+import com.uteq.sgtic.services.admissions.EmailService;
 import com.uteq.sgtic.services.impl.CrudImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import java.util.List;
-import com.uteq.sgtic.services.admissions.EmailService;
-import java.util.Optional;
 
 @Service
-public class AdmissionRequestServiceImpl extends CrudImpl<AdmissionRequest, Integer> implements IAdmissionRequestService{
+public class AdmissionRequestServiceImpl extends CrudImpl<AdmissionRequest, Integer> implements IAdmissionRequestService {
 
     @Autowired
     private AccessRequestRepository repository;
@@ -23,31 +24,50 @@ public class AdmissionRequestServiceImpl extends CrudImpl<AdmissionRequest, Inte
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     protected JpaRepository<AdmissionRequest, Integer> getRepository() {
         return repository;
     }
 
     @Override
-    public List<RequestManagementCoordinatorProjection> listarParaCoordinador(Integer idCarrera) {
-        return repository.listarParaCoordinador(idCarrera);
+    public List<RequestManagementCoordinatorProjection> listarParaCoordinador(Integer idUsuario) {
+        return repository.listarSolicitudesPorCarrera(idUsuario);
     }
 
     @Override
-    public void aprobarSolicitud(Integer idSolicitud) {
-        repository.aprobarSolicitud(idSolicitud);
+    @Transactional
+    public void aprobarSolicitud(Integer idRequest) {
+        AdmissionRequest solicitud = repository.findById(idRequest)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        String passwordTemporal = generarPasswordAleatorio();
+        String passwordEncriptado = passwordEncoder.encode(passwordTemporal);
+        repository.aprobarSolicitud(idRequest, passwordEncriptado);
+
+        emailService.enviarCredenciales(
+                solicitud.getEmail(),
+                solicitud.getFirstName(),
+                solicitud.getEmail(),
+                passwordTemporal
+        );
     }
 
     @Override
-    public void rechazarSolicitud(Integer idSolicitud, String motivo) {
-        Optional<AdmissionRequest> solicitudOpt = repository.findById(idSolicitud);
-        repository.rechazarSolicitud(idSolicitud, motivo);
+    @Transactional
+    public void rechazarSolicitud(Integer idRequest, String motivo) {
+        AdmissionRequest solicitud = repository.findById(idRequest)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        repository.rechazarSolicitud(idRequest, motivo);
+        emailService.enviarMotivoRechazo(
+                solicitud.getEmail(),
+                solicitud.getFirstName(),
+                motivo
+        );
+    }
 
-        if (solicitudOpt.isPresent()) {
-            AdmissionRequest solicitud = solicitudOpt.get();
-            String correoDestino = solicitud.getEmail();
-            String nombreEstudiante = solicitud.getFirstName() + " " + solicitud.getLastName();
-            emailService.enviarCorreoRechazo(correoDestino, nombreEstudiante, motivo);
-        }
+    private String generarPasswordAleatorio() {
+        return String.valueOf((int) (Math.random() * 899999) + 100000);
     }
 }
