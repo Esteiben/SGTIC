@@ -3,6 +3,7 @@ package com.uteq.sgtic.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Struct;
 import java.time.LocalDate;
 
 @Data
@@ -34,4 +35,7 @@ public class StudentProposedTopic {
 
     @Column(name = "estado", nullable = false, length = 20)
     private String status;
+
+    @Column(name = "url_documento", nullable = false)
+    private String url_documento;
 }
