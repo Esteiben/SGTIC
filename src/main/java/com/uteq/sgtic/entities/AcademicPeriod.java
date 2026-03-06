@@ -19,7 +19,7 @@ public class AcademicPeriod {
     @Column(name = "id_periodo")
     private Integer idPeriod;
 
-    @Column(name = "nombre", nullable = false, unique = true, length = 50)
+    @Column(name = "nombre", nullable = false, length = 50)
     private String name;
 
     @Column(name = "fecha_inicio", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
@@ -28,7 +28,7 @@ public class AcademicPeriod {
     @Column(name = "fecha_fin", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE", nullable = false)
     private LocalDate endDate;
 
-    @Column(name = "fecha_limite_matriculacion", nullable = false)
+    @Column(name = "fecha_limite_matriculacion", nullable = true)  // ← Cambiado a true
     private LocalDate enrollmentDeadline;
 
     @Column(name = "activo", nullable = false)

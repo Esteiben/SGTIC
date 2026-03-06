@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
                         .requestMatchers("/api/solicitudes/**").permitAll()
+                        .requestMatchers("/api/admin/catalog/**").permitAll()
                         .requestMatchers("/api/public/selection/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
                         .requestMatchers("/api/coordinator/faculty/**").hasAnyAuthority(
