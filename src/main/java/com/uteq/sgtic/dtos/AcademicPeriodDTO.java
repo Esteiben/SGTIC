@@ -14,8 +14,4 @@ public class AcademicPeriodDTO {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Boolean active;
-    // Agregar este campo si no existe
-
-
 }

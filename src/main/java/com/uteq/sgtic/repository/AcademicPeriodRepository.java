@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface AcademicPeriodRepository extends JpaRepository<AcademicPeriod, Integer> {
     List<AcademicPeriod> findByActiveTrueOrderByStartDateDesc();
-    // NUEVO método (todos los períodos ordenados por fecha inicio descendente)
-    List<AcademicPeriod> findAllByOrderByStartDateDesc();
-
 }
