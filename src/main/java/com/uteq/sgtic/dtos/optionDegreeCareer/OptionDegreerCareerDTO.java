@@ -1,19 +1,16 @@
-package com.uteq.sgtic.dtos;
+package com.uteq.sgtic.dtos.optionDegreeCareer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-
-public class DegreeOptionDTO {
+@AllArgsConstructor
+public class OptionDegreerCareerDTO {
     private Integer idOption;
     private String name;
     private String description;
-    private Boolean active;
     private String iconName;
-    private LocalDate createdAt;
+    private Boolean seleccionado;
 }

@@ -25,4 +25,10 @@ public class DegreeOption {
 
     @Column(name = "activo", nullable = false)
     private Boolean active;
+
+    @Column(name = "icon_name", length = 50)
+    private String iconName = "school";
+
+    @Column(name = "fecha_creacion")
+    private java.time.LocalDate createdAt = java.time.LocalDate.now();
 }

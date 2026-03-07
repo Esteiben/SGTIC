@@ -1,6 +1,5 @@
 package com.uteq.sgtic.controllers.admissions;
 
-import com.uteq.sgtic.entities.AdmissionRequest;
 import com.uteq.sgtic.projections.admissions.RequestManagementCoordinatorProjection;
 import com.uteq.sgtic.services.admissions.IAdmissionRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
