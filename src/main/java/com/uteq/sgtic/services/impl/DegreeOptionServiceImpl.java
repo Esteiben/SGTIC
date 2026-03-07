@@ -21,9 +21,9 @@ public class DegreeOptionServiceImpl implements IDegreeOptionService {
     @Override
     @Transactional(readOnly = true)
     public List<DegreeOptionDTO> getActiveOptions() {
-        return degreeOptionRepository.findAllActiveFromView().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    return degreeOptionRepository.EstoNoVale().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
     }
 
     @Override

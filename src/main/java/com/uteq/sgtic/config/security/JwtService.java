@@ -8,7 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
+//import javax.crypto.SecretKey;
+import jakarta.crypto.SecretKey;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
