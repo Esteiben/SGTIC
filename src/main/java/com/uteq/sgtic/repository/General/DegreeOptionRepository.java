@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface DegreeOptionRepository extends JpaRepository<DegreeOption, Integer>{
-    @Query(value = "SELECT * FROM v_opcion_titulacion_activa_por_carrera WHERE id_Carrera = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM v_opcion_titulacion_activa_por_carrera WHERE id_carrera = ?1", nativeQuery = true)
     List<DegreeOption> findActiveByCareerId(Integer idCarrera);
 }

@@ -13,14 +13,14 @@ import java.util.List;
 @RequestMapping("/api/degree-options")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-public class DegreeOptionController {
+public class DegreeOptionProcessController {
 
     private final IDegreeOptionService degreeOptionService;
 
-    @GetMapping("/active")
-    public ResponseEntity<List<DegreeOptionDTO>> getActiveOptions() {
-        return ResponseEntity.ok(degreeOptionService.getActiveOptions());
-    }
+//    @GetMapping("/active")
+//    public ResponseEntity<List<DegreeOptionDTO>> getActiveOptions() {
+//        return ResponseEntity.ok(degreeOptionService.getActiveOptions());
+//    }
 
     @GetMapping
     public ResponseEntity<List<DegreeOptionDTO>> getAllOptions() {

@@ -14,17 +14,17 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DegreeOptionServiceImpl implements IDegreeOptionService {
+public class DegreeOptionGeneralServiceImpl implements IDegreeOptionService {
 
     private final DegreeOptionRepository degreeOptionRepository;
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DegreeOptionDTO> getActiveOptions() {
-        return degreeOptionRepository.findAllActiveFromView().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<DegreeOptionDTO> getActiveOptions() {
+//        return degreeOptionRepository.findAllActiveFromView().stream()
+//                .map(this::convertToDTO)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     @Transactional(readOnly = true)
