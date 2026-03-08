@@ -2,8 +2,6 @@ package com.uteq.sgtic.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.sql.Struct;
 import java.time.LocalDate;
 
 @Data
@@ -23,6 +21,9 @@ public class StudentProposedTopic {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_estudiante", nullable = false)
     private Student student;
+
+    @Column(name = "id_opcion")
+    private Integer idOpcion;
 
     @Column(name = "titulo", nullable = false, length = 300)
     private String title;

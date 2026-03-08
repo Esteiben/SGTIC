@@ -8,14 +8,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DashboardStatusDTO {
-    private boolean temaSeleccionado;    // Para el círculo 1
-    private boolean directorAsignado;     // Para el círculo 2
-    private boolean procesoIniciado;      // Para el círculo 3
-    private boolean tribunalAsignado;     // Para el círculo 4
-    private boolean actaEntregada;        // Para el círculo 5
-    private boolean finalizado;           // Para el círculo 6
-    
-    // Datos adicionales para las tarjetas
+
+    private boolean prerequisitosNivel1;
+    private boolean temaSeleccionado;
+    private boolean directorAsignado;
+    private boolean reunionesMinimas;
+    private boolean defensaAnteproyecto;
+    private boolean prerequisitosNivel2;
+    private boolean asistenciaTutorias;
+    private boolean predefensa;
+    private boolean defensaFinal;
+
     private String nombreTema;
     private String nombreDirector;
+    private String nombreOpcion;
+
+    private Integer totalTutorias;
 }
