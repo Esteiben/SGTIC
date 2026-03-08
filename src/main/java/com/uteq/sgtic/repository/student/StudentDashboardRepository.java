@@ -1,6 +1,6 @@
 package com.uteq.sgtic.repository.student;
 
-import com.uteq.sgtic.entities.User; // Ajusta según tu entidad
+import com.uteq.sgtic.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
