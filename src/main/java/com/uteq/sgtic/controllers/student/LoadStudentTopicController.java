@@ -1,23 +1,29 @@
 package com.uteq.sgtic.controllers.student;
 
 import com.uteq.sgtic.config.security.JwtService;
-import com.uteq.sgtic.services.student.IDegreeOptionService;
+import com.uteq.sgtic.dtos.student.LoadStudentTopicsDTO;
+import com.uteq.sgtic.services.student.ILoadStudentTopicServices;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/degree-options")
+@RequestMapping("/api/temas")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
-public class DegreeOptionController {
+public class LoadStudentTopicController {
 
-    private final IDegreeOptionService degreeOptionService;
+    private final ILoadStudentTopicServices loadStudentTopicServices;
     private final JwtService jwtService;
 
-    @GetMapping("/active")
-    public ResponseEntity<?> getActiveOptions(HttpServletRequest request) {
+    @GetMapping("/disponibles")
+    public ResponseEntity<?> getTemasDisponibles(
+            @RequestParam Integer idOpcion,
+            HttpServletRequest request
+    ) {
         try {
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -31,11 +37,12 @@ public class DegreeOptionController {
                 return ResponseEntity.badRequest().body("El usuario no tiene una carrera asociada");
             }
 
-            return ResponseEntity.ok(degreeOptionService.getActiveOptionsByCareer(idCarrera));
+            List<LoadStudentTopicsDTO> temas = loadStudentTopicServices.getTemasDisponibles(idCarrera, idOpcion);
+            return ResponseEntity.ok(temas);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(401).body("Token inválido: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error interno: " + e.getMessage());
         }
     }
 }

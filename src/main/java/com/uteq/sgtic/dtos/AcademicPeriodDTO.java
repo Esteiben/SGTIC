@@ -14,4 +14,6 @@ public class AcademicPeriodDTO {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
+    private boolean active;                // ← Agregar si no está
+    private LocalDate enrollmentDeadline;
 }

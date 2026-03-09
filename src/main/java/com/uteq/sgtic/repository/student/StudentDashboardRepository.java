@@ -10,30 +10,42 @@ import org.springframework.stereotype.Repository;
 public interface StudentDashboardRepository extends JpaRepository<User, Integer> {
 
     @Query(value = """
-        SELECT 
-            (s.id_tema IS NOT NULL) as temaSeleccionado,
-            (s.id_director IS NOT NULL) as directorAsignado,
-            (s.estado_proceso = 'EN_CURSO') as procesoIniciado,
-            (s.id_tribunal IS NOT NULL) as tribunalAsignado,
-            (s.fecha_entrega_acta IS NOT NULL) as actaEntregada,
-            (s.estado_proceso = 'FINALIZADO') as finalizado,
-            t.nombre as nombreTema,
-            d.nombre_completo as nombreDirector
-        FROM estudiante s
-        LEFT JOIN tema t ON s.id_tema = t.id
-        LEFT JOIN docente d ON s.id_director = d.id
-        WHERE s.id_usuario = :userId
+        SELECT
+            d.prerequisitos_nivel1 AS "prerequisitosNivel1",
+            d.tema_seleccionado AS "temaSeleccionado",
+            d.director_asignado AS "directorAsignado",
+            d.reuniones_minimas AS "reunionesMinimas",
+            d.defensa_anteproyecto AS "defensaAnteproyecto",
+            d.prerequisitos_nivel2 AS "prerequisitosNivel2",
+            d.asistencia_tutorias AS "asistenciaTutorias",
+            d.predefensa AS "predefensa",
+            d.defensa_final AS "defensaFinal",
+            d.nombre_tema AS "nombreTema",
+            d.nombre_director AS "nombreDirector",
+            d.nombre_opcion AS "nombreOpcion",
+            d.total_tutorias AS "totalTutorias"
+        FROM fn_estudiante_dashboard(:userId, :periodoId) d
         """, nativeQuery = true)
-    DashboardProjection getStudentDashboardStatus(@Param("userId") Integer userId);
+    DashboardProjection getStudentDashboardStatus(
+            @Param("userId") Integer userId,
+            @Param("periodoId") Integer periodoId
+    );
 
     interface DashboardProjection {
+        Boolean getPrerequisitosNivel1();
         Boolean getTemaSeleccionado();
         Boolean getDirectorAsignado();
-        Boolean getProcesoIniciado();
-        Boolean getTribunalAsignado();
-        Boolean getActaEntregada();
-        Boolean getFinalizado();
+        Boolean getReunionesMinimas();
+        Boolean getDefensaAnteproyecto();
+        Boolean getPrerequisitosNivel2();
+        Boolean getAsistenciaTutorias();
+        Boolean getPredefensa();
+        Boolean getDefensaFinal();
+
         String getNombreTema();
         String getNombreDirector();
+        String getNombreOpcion();
+
+        Integer getTotalTutorias();
     }
 }
