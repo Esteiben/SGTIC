@@ -6,28 +6,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
-@RequestMapping("/api/public/request-access")
+@RequestMapping("/api/request-access")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 public class RequestAccessController {
 
-    private final IRequestAccessServices iRequestAccessServices;
+    private final IRequestAccessServices requestAccessServices;
 
     @PostMapping
-    public ResponseEntity<?> requestAccess(@RequestBody RequestAccessDTO dto) {
+    public ResponseEntity<?> createRequest(@RequestBody RequestAccessDTO dto) {
         try {
-            iRequestAccessServices.requestAccess(dto);
-            
-            return ResponseEntity.ok(Map.of("message", "Solicitud de acceso enviada correctamente."));
-            
+            requestAccessServices.createRequest(dto);
+            return ResponseEntity.ok("Solicitud enviada correctamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409).body(e.getMessage());
         } catch (Exception e) {
-            Throwable cause = e.getCause() != null ? e.getCause() : e;
-            String errorMessage = cause.getMessage() != null ? cause.getMessage() : "Error interno al procesar la solicitud.";
-            
-            return ResponseEntity.badRequest().body(Map.of("error", errorMessage));
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Error interno: " + e.getMessage());
         }
     }
 }
