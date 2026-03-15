@@ -65,4 +65,23 @@ public class EmailService {
             System.err.println("Error al enviar alerta automática: " + e.getMessage());
         }
     }
+
+    public void enviarNotificacionAsignacionDirector(String correoDocente, String nombreDocente, String tituloProyecto, String nombreEstudiante) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(correoDocente);
+            message.setSubject("📋 SGTIC: Nueva Asignación - Director de Trabajo de Integración Curricular");
+            message.setText("Estimado/a " + nombreDocente + ",\n\n" +
+                    "Le informamos que el Consejo Directivo de la Facultad le ha designado como DIRECTOR para el siguiente proyecto de titulación:\n\n" +
+                    "Proyecto: " + tituloProyecto + "\n" +
+                    "Estudiante: " + nombreEstudiante + "\n\n" +
+                    "Por favor, ingrese al sistema SGTIC para revisar los detalles de la propuesta y comenzar con el proceso de tutoría.\n\n" +
+                    "Atentamente,\nCoordinación de Carrera - SGTIC.");
+
+            mailSender.send(message);
+            System.out.println("📧 Notificación de asignación enviada al docente: " + correoDocente);
+        } catch (Exception e) {
+            System.err.println("Error al enviar notificación al docente: " + e.getMessage());
+        }
+    }
 }

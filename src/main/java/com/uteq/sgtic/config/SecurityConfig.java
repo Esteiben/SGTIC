@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/request-access/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/asignaciones/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
                         .requestMatchers("/api/solicitudes/**").permitAll()
