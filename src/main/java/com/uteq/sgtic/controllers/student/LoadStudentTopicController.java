@@ -26,6 +26,7 @@ public class LoadStudentTopicController {
     ) {
         try {
             String authHeader = request.getHeader("Authorization");
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(401).body("Token no proporcionado");
             }

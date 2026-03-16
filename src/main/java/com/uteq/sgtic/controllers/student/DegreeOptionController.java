@@ -20,6 +20,7 @@ public class DegreeOptionController {
     public ResponseEntity<?> getActiveOptions(HttpServletRequest request) {
         try {
             String authHeader = request.getHeader("Authorization");
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(401).body("Token no proporcionado");
             }

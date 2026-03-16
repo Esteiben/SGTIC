@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,7 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -33,33 +34,44 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/request-access/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/teacher/tutorships").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/asignaciones/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
-                        .requestMatchers("/api/solicitudes/**").permitAll()
-                        .requestMatchers("/api/public/selection/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/admin/catalog/periods/active").authenticated()
-                        .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
-                        .requestMatchers("/api/coordinator/faculty/**").hasAnyAuthority(
-                                "administrador_sgtic", "coordinador_facultad")
-                        .requestMatchers("/api/coordinator/career/**").hasAnyAuthority(
-                                "administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
-                        .requestMatchers("/api/teacher/**").hasAnyAuthority(
-                                "administrador_sgtic", "docente", "director_trabajo_titulacion")
-                        .requestMatchers("/api/student/**").hasAuthority("estudiante")
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+
+                // Preflight CORS
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                // Públicos
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/request-access/**").permitAll()
+                .requestMatchers("/api/public/selection/**").permitAll()
+                .requestMatchers("/api/solicitudes/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
+
+                // OAuth Google Drive público
+                .requestMatchers("/api/admin/drive/oauth/**").permitAll()
+
+                // Rutas protegidas por rol
+                .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods/active")
+                    .hasAuthority("administrador_sgtic")
+                .requestMatchers("/api/admin/**")
+                    .hasAuthority("administrador_sgtic")
+                .requestMatchers("/api/coordinator/faculty/**")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad")
+                .requestMatchers("/api/coordinator/career/**")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
+                .requestMatchers("/api/teacher/**")
+                    .hasAnyAuthority("administrador_sgtic", "docente", "director_trabajo_titulacion")
+                .requestMatchers("/api/student/**")
+                    .hasAuthority("estudiante")
+
+                // Todo lo demás autenticado
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -77,27 +89,33 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type",
-                "X-Requested-With",
-                "Accept",
-                "Origin",
-                "Access-Control-Request-Method",
-                "Access-Control-Request-Headers"
+
+        configuration.setAllowedOrigins(List.of(
+            "http://localhost:4200",
+            "http://127.0.0.1:4200"
         ));
-        configuration.setExposedHeaders(Arrays.asList(
-                "Access-Control-Allow-Origin",
-                "Access-Control-Allow-Credentials"
+
+        configuration.setAllowedMethods(List.of(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+        ));
+
+        configuration.setAllowedHeaders(List.of(
+            "Authorization",
+            "Content-Type",
+            "X-Requested-With",
+            "Accept",
+            "Origin"
+        ));
+
+        configuration.setExposedHeaders(List.of(
+            "Authorization"
         ));
 
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }

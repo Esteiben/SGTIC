@@ -4,16 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterProposalStudentTopicResponseDTO {
+public class UpdateStudentProposalResponseDTO {
     private String mensaje;
-    private Integer idTemaPropuesto;
     private Integer idPropuesta;
-    private Integer idOpcion;
-    private Integer idPeriodo;
-    private LocalDate fechaLimiteSeleccion;
+    private Integer numeroVersion;
 }
