@@ -1,6 +1,7 @@
 package com.uteq.sgtic.services;
 
-import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob
+        .BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;

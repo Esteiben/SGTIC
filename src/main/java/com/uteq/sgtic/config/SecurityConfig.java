@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/request-access/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/teacher/tutorships").permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/asignaciones/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()

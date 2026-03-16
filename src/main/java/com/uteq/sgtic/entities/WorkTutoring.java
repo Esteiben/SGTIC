@@ -42,4 +42,16 @@ public class WorkTutoring {
 
     @Column(name = "registrada", nullable = false)
     private Boolean registered;
+
+    @Column(name = "modalidad", length = 20)
+    private String modality;
+
+    @Column(name = "lugar_enlace", length = 255)
+    private String locationLink;
+
+    @Column(name = "asistencia")
+    private Boolean attendance;
+
+    @Column(name = "url_informe", length = 500)
+    private String reportUrl;
 }
