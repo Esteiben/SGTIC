@@ -5,7 +5,6 @@ import com.uteq.sgtic.dtos.LoginResponseDTO;
 import com.uteq.sgtic.dtos.NewPasswordDTO;
 import com.uteq.sgtic.repository.UserRepository;
 import com.uteq.sgtic.services.IAuthService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.security.Principal;
