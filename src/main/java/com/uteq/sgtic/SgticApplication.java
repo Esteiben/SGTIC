@@ -7,10 +7,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 @EnableScheduling
-public class SgticApplication {
+public class  SgticApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SgticApplication.class, args);
     }
 
 }
+

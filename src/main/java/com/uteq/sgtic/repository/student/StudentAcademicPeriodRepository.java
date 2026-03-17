@@ -19,6 +19,8 @@ public interface StudentAcademicPeriodRepository extends JpaRepository<User, Int
         LocalDate getEndDate();
         Boolean getActive();
         LocalDate getEnrollmentDeadline();
+        Integer getPlazoCambioTema();    // ✅ NUEVO
+        Integer getMinimoAvances();       // ✅ NUEVO
     }
 
     @Query(value = """
@@ -28,7 +30,9 @@ public interface StudentAcademicPeriodRepository extends JpaRepository<User, Int
             CAST(p.fecha_inicio AS DATE) AS startDate,
             CAST(p.fecha_fin AS DATE) AS endDate,
             p.activo AS active,
-            CAST(p.fecha_limite_matriculacion AS DATE) AS enrollmentDeadline
+            CAST(p.fecha_limite_matriculacion AS DATE) AS enrollmentDeadline,
+            p.plazo_cambio_tema AS plazoCambioTema,    // ✅ NUEVO
+            p.minimo_avances AS minimoAvances          // ✅ NUEVO
         FROM solicitud_ingreso si
         JOIN usuario u ON u.identificacion = si.identificacion
         JOIN periodo_academico p ON p.id_periodo = si.id_periodo

@@ -17,7 +17,6 @@ public class AcademicPeriodController {
 
     private final AcademicPeriodRepository academicPeriodRepository;
 
-    // GET todos los períodos
     @GetMapping
     public ResponseEntity<List<AcademicPeriodDTO>> getAllPeriods() {
         List<AcademicPeriod> periods = academicPeriodRepository.findAll();
@@ -28,21 +27,21 @@ public class AcademicPeriodController {
                         p.getStartDate(),
                         p.getEndDate(),
                         p.getActive(),
-                        p.getEnrollmentDeadline()
+                        p.getEnrollmentDeadline(),
+                        p.getPlazoCambioTema(),
+                        p.getMinimoAvances()
                 ))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 
-    // POST crear período
     @PostMapping
     public ResponseEntity<AcademicPeriod> createPeriod(@RequestBody AcademicPeriod period) {
-        period.setIdPeriod(null); // Asegurar que genere nuevo ID
+        period.setIdPeriod(null);
         AcademicPeriod saved = academicPeriodRepository.save(period);
         return ResponseEntity.ok(saved);
     }
 
-    // PUT actualizar período
     @PutMapping("/{id}")
     public ResponseEntity<AcademicPeriod> updatePeriod(
             @PathVariable Integer id,
@@ -54,6 +53,8 @@ public class AcademicPeriodController {
                     existing.setStartDate(period.getStartDate());
                     existing.setEndDate(period.getEndDate());
                     existing.setActive(period.getActive());
+                    existing.setPlazoCambioTema(period.getPlazoCambioTema());
+                    existing.setMinimoAvances(period.getMinimoAvances());
                     if (period.getEnrollmentDeadline() != null) {
                         existing.setEnrollmentDeadline(period.getEnrollmentDeadline());
                     }
@@ -62,7 +63,6 @@ public class AcademicPeriodController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // DELETE eliminar período
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePeriod(@PathVariable Integer id) {
         if (!academicPeriodRepository.existsById(id)) {

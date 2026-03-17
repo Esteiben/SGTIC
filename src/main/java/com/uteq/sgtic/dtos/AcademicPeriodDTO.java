@@ -16,4 +16,6 @@ public class AcademicPeriodDTO {
     private LocalDate endDate;
     private boolean active;
     private LocalDate enrollmentDeadline;
+    private Integer plazoCambioTema;
+    private Integer minimoAvances;
 }

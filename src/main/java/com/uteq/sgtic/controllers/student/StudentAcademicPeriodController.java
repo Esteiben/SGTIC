@@ -36,7 +36,9 @@ public class StudentAcademicPeriodController {
                         p.getStartDate(),
                         p.getEndDate(),
                         Boolean.TRUE.equals(p.getActive()),
-                        p.getEnrollmentDeadline()
+                        p.getEnrollmentDeadline(),
+                        p.getPlazoCambioTema(),    //  NUEVO
+                        p.getMinimoAvances()        //  NUEVO
                 ))
                 .collect(Collectors.toList());
 

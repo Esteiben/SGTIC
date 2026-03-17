@@ -3,7 +3,6 @@ package com.uteq.sgtic.controllers;
 import com.uteq.sgtic.dtos.AcademicPeriodDTO;
 import com.uteq.sgtic.entities.AcademicPeriod;
 import com.uteq.sgtic.repository.AcademicPeriodRepository;
-import com.uteq.sgtic.repository.CareerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,9 @@ public class CatalogController {
                         p.getStartDate(),
                         p.getEndDate(),
                         p.getActive(),
-                        p.getEnrollmentDeadline()
+                        p.getEnrollmentDeadline(),
+                        p.getPlazoCambioTema(),
+                        p.getMinimoAvances()
                 ))
                 .collect(Collectors.toList());
 

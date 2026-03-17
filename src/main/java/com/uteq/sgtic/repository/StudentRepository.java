@@ -1,6 +1,7 @@
 package com.uteq.sgtic.repository;
 
 import com.uteq.sgtic.entities.Student;
+import com.uteq.sgtic.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,9 +12,11 @@ import java.util.Optional;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
+    Optional<Student> findByUserIdentification(String identification);
 
     Optional<Student> findByUserId(Integer userId);
-    Optional<Student> findByUserIdentification(String identification);
+    // Buscar estudiante por objeto User
+    Optional<Student> findByUser(User user);
 
     @Query(value = "SELECT DISTINCT estado FROM propuesta_trabajo WHERE estado IS NOT NULL", nativeQuery = true)
     List<String> findDistinctEstados();
@@ -27,4 +30,9 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                                                   @Param("idPeriodo") Integer idPeriodo,
                                                   @Param("estado") String estado,
                                                   @Param("idDirector") Integer idDirector);
+
+
+
 }
+
+
