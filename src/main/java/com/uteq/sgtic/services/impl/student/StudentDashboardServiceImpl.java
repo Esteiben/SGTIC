@@ -69,7 +69,7 @@ public class StudentDashboardServiceImpl {
 
         // 3. VERIFICAR TUTORÍAS / REUNIONES (Aislando por el periodo exacto como pediste)
         long tutoriasCumplidas = tutoringRepository.countByStudentIdStudentAndDegreeWorkAcademicPeriodIdPeriodAndRegisteredTrue(estudianteId, periodoId);
-        int tutoriasMinimasRequeridas = matricula.getAcademicPeriod().getMinAdvances() != null ? matricula.getAcademicPeriod().getMinAdvances() : 5; // Asumimos 5 por defecto
+        int tutoriasMinimasRequeridas = matricula.getAcademicPeriod().getMinimoAvances() != null ? matricula.getAcademicPeriod().getMinimoAvances() : 5; // Asumimos 5 por defecto
         
         builder.totalTutorias((int) tutoriasCumplidas);
         builder.reunionesMinimas(tutoriasCumplidas >= tutoriasMinimasRequeridas);

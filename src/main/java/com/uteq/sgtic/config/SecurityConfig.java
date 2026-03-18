@@ -47,6 +47,7 @@ public class SecurityConfig {
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/request-access/**").permitAll()
+                    .requestMatchers("/chat-socket/**").permitAll()
                 .requestMatchers("/api/public/selection/**").permitAll()
                 .requestMatchers("/api/solicitudes/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()

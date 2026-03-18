@@ -39,7 +39,9 @@ public class StatisticsReportServiceImp implements IStatisticsReportService {
                         p.getStartDate(),
                         p.getEndDate(),
                         p.getActive(),
-                        p.getEnrollmentDeadline()
+                        p.getEnrollmentDeadline(),
+                        p.getPlazoCambioTema(),
+                        p.getMinimoAvances()
                 ))
                 .collect(Collectors.toList());
     }
