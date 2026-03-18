@@ -22,8 +22,9 @@ public class StudentProposedTopic {
     @JoinColumn(name = "id_estudiante", nullable = false)
     private Student student;
 
-    @Column(name = "id_opcion")
-    private Integer idOpcion;
+    @ManyToOne
+    @JoinColumn(name = "id_opcion")
+    private DegreeOption degreeOption;
 
     @Column(name = "titulo", nullable = false, length = 300)
     private String title;

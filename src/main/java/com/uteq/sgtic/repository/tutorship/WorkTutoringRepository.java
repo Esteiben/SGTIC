@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface WorkTutoringRepository extends JpaRepository<WorkTutoring, Integer> {
     List<WorkTutoring> findByDirector_IdTeacherOrderByDateDesc(Integer idTeacher);
+
+    long countByStudentIdStudentAndDegreeWorkAcademicPeriodIdPeriodAndRegisteredTrue(Integer idStudent, Integer idPeriod);
 }

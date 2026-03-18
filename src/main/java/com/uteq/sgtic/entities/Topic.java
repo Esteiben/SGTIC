@@ -41,4 +41,8 @@ public class Topic {
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDate creationDate;
+
+    @ManyToOne
+    @JoinColumn(name = "id_opcion")
+    private DegreeOption degreeOption;
 }

@@ -39,4 +39,10 @@ public class AcademicPeriod {
 
     @Column(name = "activo", nullable = false)
     private Boolean active;
+
+    @Column(name = "minimo_avances")
+    private Integer minAdvances;
+
+    @Column(name = "plazo_cambio_tema")
+    private Integer topicChangeDeadline;
 }
