@@ -17,7 +17,7 @@ public class WebSocketController {
     @MessageMapping("/chat/{roomId}")
     @SendTo("/topic/{roomId}")
     public ChatMessage chat(@DestinationVariable String roomId, ChatMessage message){
-        System.out.println("📨 ===== MENSAJE RECIBIDO =====");
+        System.out.println(" ===== MENSAJE RECIBIDO =====");
         System.out.println("   Sala: " + roomId);
         System.out.println("   Usuario: " + message.getUser());
         System.out.println("   Mensaje: " + message.getMessage());
@@ -25,7 +25,7 @@ public class WebSocketController {
 
         // Verificar si es una respuesta a otro mensaje
         if (message.getReplyTo() != null) {
-            System.out.println("   ↪️ RESPONDIENDO A:");
+            System.out.println("   ↪ RESPONDIENDO A:");
             System.out.println("      ID: " + message.getReplyTo().getId());
             System.out.println("      Usuario: " + message.getReplyTo().getUser());
             System.out.println("      Mensaje: " + message.getReplyTo().getMessage());
@@ -35,9 +35,9 @@ public class WebSocketController {
         new Thread(() -> {
             try {
                 chatService.guardarMensaje(roomId, message);
-                System.out.println("✅ Mensaje enviado a ChatService para guardar");
+                System.out.println(" Mensaje enviado a ChatService para guardar");
             } catch (Exception e) {
-                System.err.println("❌ Error al guardar mensaje: " + e.getMessage());
+                System.err.println(" Error al guardar mensaje: " + e.getMessage());
                 e.printStackTrace();
             }
         }).start();
