@@ -47,6 +47,7 @@ public class SecurityConfig {
                     .requestMatchers("/chat-socket/**").permitAll()
                 .requestMatchers("/api/public/selection/**").permitAll()
                 .requestMatchers("/api/solicitudes/**").permitAll()
+                    .requestMatchers("/api/common/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
                 .requestMatchers("/api/admin/drive/oauth/**").permitAll()
@@ -83,7 +84,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 👇 IMPORTANTE: Usar allowedOriginPatterns en lugar de allowedOrigins
+        //  IMPORTANTE: Usar allowedOriginPatterns en lugar de allowedOrigins
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:4200",
                 "https://localhost:4200"
