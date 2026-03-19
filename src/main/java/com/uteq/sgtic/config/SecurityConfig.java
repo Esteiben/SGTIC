@@ -40,10 +40,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
-                // Preflight CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                // Públicos
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/request-access/**").permitAll()
@@ -52,11 +49,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/solicitudes/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
-
-                // OAuth Google Drive público
                 .requestMatchers("/api/admin/drive/oauth/**").permitAll()
-
-                // Rutas protegidas por rol
                 .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods/active")
                     .hasAuthority("administrador_sgtic")
                 .requestMatchers("/api/admin/**")
@@ -69,8 +62,6 @@ public class SecurityConfig {
                     .hasAnyAuthority("administrador_sgtic", "docente", "director_trabajo_titulacion")
                 .requestMatchers("/api/student/**")
                     .hasAuthority("estudiante")
-
-                // Todo lo demás autenticado
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
