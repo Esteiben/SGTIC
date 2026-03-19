@@ -61,7 +61,7 @@ public class AiAssignmentService {
             return objectMapper.readValue(respuestaIA, new TypeReference<List<AiMatchResultDTO>>() {});
 
         } catch (Exception e) {
-            System.err.println("🚨 Error IA Groq: " + e.getMessage());
+            System.err.println("Error IA Groq: " + e.getMessage());
             return List.of();
         }
     }
