@@ -48,6 +48,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/public/selection/**").permitAll()
                 .requestMatchers("/api/solicitudes/**").permitAll()
                     .requestMatchers("/api/common/**").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
                 .requestMatchers("/api/admin/drive/oauth/**").permitAll()
