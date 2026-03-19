@@ -40,23 +40,22 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
-                // Preflight CORS
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                // Públicos
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/request-access/**").permitAll()
+                    .requestMatchers("/chat-socket/**").permitAll()
                 .requestMatchers("/api/public/selection/**").permitAll()
                 .requestMatchers("/api/solicitudes/**").permitAll()
+                    .requestMatchers("/api/common/**").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
                 .requestMatchers("/chat-socket/**").permitAll()
 
                 // OAuth Google Drive público
                 .requestMatchers("/api/admin/drive/oauth/**").permitAll()
-
-                // Rutas protegidas por rol
                 .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods/active")
                     .hasAuthority("administrador_sgtic")
                 .requestMatchers("/api/admin/**")
@@ -69,8 +68,6 @@ public class SecurityConfig {
                     .hasAnyAuthority("administrador_sgtic", "docente", "director_trabajo_titulacion")
                 .requestMatchers("/api/student/**")
                     .hasAuthority("estudiante")
-
-                // Todo lo demás autenticado
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -92,7 +89,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 👇 IMPORTANTE: Usar allowedOriginPatterns en lugar de allowedOrigins
+        //  IMPORTANTE: Usar allowedOriginPatterns en lugar de allowedOrigins
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:4200",
                 "https://localhost:4200"

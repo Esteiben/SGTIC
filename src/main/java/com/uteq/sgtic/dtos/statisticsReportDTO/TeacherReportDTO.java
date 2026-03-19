@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class TeacherReportDTO {
     private Long idDocente;
     private String nombreCompleto;
-    private String especializacionPrincipal;
+    private String especializacion;
     private long proyectosAsignados;
 }
