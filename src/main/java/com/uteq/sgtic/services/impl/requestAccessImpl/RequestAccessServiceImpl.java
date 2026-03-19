@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -72,6 +73,12 @@ public class RequestAccessServiceImpl implements IRequestAccessServices {
         request.setCareer(career);
         request.setAcademicPeriod(academicPeriod);
 
+        // --- AQUÍ ESTÁN LOS 3 CAMPOS NUEVOS QUE AGREGAMOS ---
+        request.setIdFaculty(dto.getIdFacultad());
+        request.setSubmissionDate(LocalDate.now()); // Fecha de hoy
+        request.setRequestedLevel(1); // Nivel 1 por defecto
+        // ----------------------------------------------------
+
         requestAccessRepository.save(request);
     }
 
@@ -95,6 +102,12 @@ public class RequestAccessServiceImpl implements IRequestAccessServices {
         if (dto.getCorreo() == null || dto.getCorreo().trim().isEmpty()) {
             throw new IllegalArgumentException("El correo es obligatorio");
         }
+        
+        // --- VALIDACIÓN DE FACULTAD QUE FALTABA ---
+        if (dto.getIdFacultad() == null) {
+            throw new IllegalArgumentException("La facultad es obligatoria");
+        }
+        // ------------------------------------------
 
         if (dto.getIdCarrera() == null) {
             throw new IllegalArgumentException("La carrera es obligatoria");

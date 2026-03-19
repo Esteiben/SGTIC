@@ -31,6 +31,19 @@ public class AdmissionRequest {
     @Column(name = "correo")
     private String email;
 
+    // --- NUEVOS CAMPOS AGREGADOS ---
+
+    @Column(name = "id_facultad")
+    private Integer idFaculty;
+
+    @Column(name = "fecha_envio")
+    private LocalDate submissionDate;
+
+    @Column(name = "nivel_solicitado")
+    private Integer requestedLevel;
+
+    // -------------------------------
+
     @Column(name = "estado")
     private String status;
 
