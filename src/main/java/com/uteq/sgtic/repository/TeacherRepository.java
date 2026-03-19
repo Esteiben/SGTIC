@@ -35,7 +35,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Integer> {
             @Param("correo") String correo,
             @Param("especialidades") String especialidades,
             @Param("idCarrera") Integer idCarrera,
-            @Param("idUsuarioLogueado") Integer idUsuarioLogueado // <-- NUEVO
+            @Param("idUsuarioLogueado") Integer idUsuarioLogueado
     );
 
     @Query(value = "SELECT * FROM fn_docentes_reporte(CAST(:idCarrera AS INTEGER), CAST(:idPeriodo AS INTEGER))", nativeQuery = true)
