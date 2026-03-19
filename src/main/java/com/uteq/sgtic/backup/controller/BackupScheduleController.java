@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controller para administrar tareas programadas de backup.
- */
 @RestController
 @RequestMapping("/api/admin/backup-schedules")
 @RequiredArgsConstructor

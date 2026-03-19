@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Servicio encargado de crear, actualizar y eliminar tareas
- * del Programador de tareas de Windows usando schtasks.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,9 +24,6 @@ public class WindowsTaskSchedulerService {
     @Value("${backup.runner.script-path}")
     private String runnerScriptPath;
 
-    /**
-     * Crea o actualiza una tarea en Windows.
-     */
     public void createOrUpdateTask(BackupSchedule schedule) {
         validateSchedule(schedule);
 
@@ -65,9 +58,6 @@ public class WindowsTaskSchedulerService {
         }
     }
 
-    /**
-     * Elimina la tarea si existe.
-     */
     public void deleteTaskIfExists(String taskName) {
         if (!StringUtils.hasText(taskName)) {
             return;
@@ -91,9 +81,6 @@ public class WindowsTaskSchedulerService {
         }
     }
 
-    /**
-     * Ejecuta una tarea inmediatamente.
-     */
     public void runTaskNow(String taskName) {
         List<String> command = new ArrayList<>();
         command.add("schtasks");
@@ -108,9 +95,6 @@ public class WindowsTaskSchedulerService {
         }
     }
 
-    /**
-     * Verifica si la tarea existe.
-     */
     public boolean taskExists(String taskName) {
         List<String> command = new ArrayList<>();
         command.add("schtasks");
@@ -170,9 +154,6 @@ public class WindowsTaskSchedulerService {
         }
     }
 
-    /**
-     * Resultado de la ejecución de un comando del scheduler.
-     */
     private record SchedulerCommandResult(int exitCode, String output) {
     }
 }

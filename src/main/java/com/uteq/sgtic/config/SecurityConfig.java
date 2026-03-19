@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/solicitudes/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
+                .requestMatchers("/chat-socket/**").permitAll()
 
                 // OAuth Google Drive público
                 .requestMatchers("/api/admin/drive/oauth/**").permitAll()

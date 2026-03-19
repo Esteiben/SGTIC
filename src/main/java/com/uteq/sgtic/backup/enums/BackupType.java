@@ -1,8 +1,9 @@
 package com.uteq.sgtic.backup.enums;
 
-//Por ahora el motor solo ejecuta FULL.
+// Tipos de respaldos soportados por el motor (y el estado de restauración)
 public enum BackupType {
     FULL,
     DIFFERENTIAL,
-    INCREMENTAL
+    INCREMENTAL,
+    RESTORE
 }

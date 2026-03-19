@@ -1,80 +1,64 @@
 package com.uteq.sgtic.backup.controller;
 
-import com.uteq.sgtic.backup.dto.BackupConfigRequestDTO;
-import com.uteq.sgtic.backup.dto.BackupConfigResponseDTO;
-import com.uteq.sgtic.backup.dto.BackupExecutionResponseDTO;
-import com.uteq.sgtic.backup.dto.BackupMessageDTO;
-import com.uteq.sgtic.backup.service.BackupService;
+import com.uteq.sgtic.backup.dto.*;
+import com.uteq.sgtic.backup.enums.BackupType;
+import com.uteq.sgtic.backup.service.BackupManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-/**
- * Controller para administrar la configuración de respaldos
- * y consultar el historial de ejecuciones.
- */
 @RestController
 @RequestMapping("/api/admin/backups")
 @RequiredArgsConstructor
 public class BackupController {
 
-    private final BackupService backupService;
+    private final BackupManagerService backupManagerService;
 
-    /**
-     * Obtiene la configuración activa.
-     */
     @GetMapping("/config/active")
     public ResponseEntity<?> getActiveConfig() {
-        try {
-            BackupConfigResponseDTO response = backupService.getActiveConfig();
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new BackupMessageDTO(e.getMessage()));
-        }
+        try { return ResponseEntity.ok(backupManagerService.getActiveConfig()); } 
+        catch (Exception e) { return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BackupMessageDTO(e.getMessage())); }
     }
 
-    /**
-     * Crea una configuración nueva.
-     */
     @PostMapping("/config")
     public ResponseEntity<?> createConfig(@RequestBody BackupConfigRequestDTO request) {
-        try {
-            BackupConfigResponseDTO response = backupService.createConfig(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new BackupMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new BackupMessageDTO("Error al crear la configuración: " + e.getMessage()));
-        }
+        try { return ResponseEntity.status(HttpStatus.CREATED).body(backupManagerService.createConfig(request)); } 
+        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BackupMessageDTO(e.getMessage())); }
     }
 
-    /**
-     * Actualiza una configuración existente.
-     */
     @PutMapping("/config/{id}")
-    public ResponseEntity<?> updateConfig(@PathVariable Long id,
-                                          @RequestBody BackupConfigRequestDTO request) {
-        try {
-            BackupConfigResponseDTO response = backupService.updateConfig(id, request);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(new BackupMessageDTO(e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new BackupMessageDTO("Error al actualizar la configuración: " + e.getMessage()));
-        }
+    public ResponseEntity<?> updateConfig(@PathVariable Long id, @RequestBody BackupConfigRequestDTO request) {
+        try { return ResponseEntity.ok(backupManagerService.updateConfig(id, request)); } 
+        catch (Exception e) { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BackupMessageDTO(e.getMessage())); }
     }
 
-    /**
-     * Lista el historial de ejecuciones.
-     */
     @GetMapping("/executions")
     public ResponseEntity<List<BackupExecutionResponseDTO>> getExecutionHistory() {
-        return ResponseEntity.ok(backupService.getExecutionHistory());
+        return ResponseEntity.ok(backupManagerService.getExecutionHistory());
+    }
+
+    // Nuevo endpoint para que Angular mande un backup manual (eligiendo el tipo)
+    @PostMapping("/run")
+    public ResponseEntity<?> runBackupManual(@RequestParam String type, @RequestParam Integer adminId) {
+        try {
+            BackupType backupType = BackupType.valueOf(type.toUpperCase());
+            backupManagerService.runBackup(backupType, "ADMIN_MANUAL", adminId);
+            return ResponseEntity.ok(new BackupMessageDTO("Backup " + type + " iniciado correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BackupMessageDTO(e.getMessage()));
+        }
+    }
+
+    // Nuevo endpoint de RESTAURACIÓN
+    @PostMapping("/executions/{id}/restore")
+    public ResponseEntity<?> restoreDatabase(@PathVariable Long id, @RequestParam Integer adminId) {
+        try {
+            backupManagerService.restoreBackup(id, adminId);
+            return ResponseEntity.ok(new BackupMessageDTO("Base de datos restaurada correctamente."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BackupMessageDTO("Error de restauración: " + e.getMessage()));
+        }
     }
 }

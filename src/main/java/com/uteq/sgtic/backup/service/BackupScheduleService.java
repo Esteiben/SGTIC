@@ -159,11 +159,6 @@ public class BackupScheduleService {
             throw new IllegalArgumentException("La hora de ejecución es obligatoria.");
         }
 
-        BackupType backupType = BackupType.valueOf(request.getBackupType().toUpperCase(Locale.ROOT));
-        if (backupType != BackupType.FULL) {
-            throw new IllegalArgumentException("Por ahora solo está soportado el tipo FULL.");
-        }
-
         BackupFrequency frequency = BackupFrequency.valueOf(request.getFrequency().toUpperCase(Locale.ROOT));
         if (frequency == BackupFrequency.WEEKLY && !StringUtils.hasText(request.getDayOfWeek())) {
             throw new IllegalArgumentException("Las tareas semanales requieren dayOfWeek.");

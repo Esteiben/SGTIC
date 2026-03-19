@@ -72,6 +72,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // No lanzar excepción, dejar que continue (el endpoint protegido rechazará si es necesario)
         }
 
+        
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/chat-socket");
     }
 }

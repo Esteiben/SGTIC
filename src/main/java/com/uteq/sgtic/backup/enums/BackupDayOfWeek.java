@@ -1,6 +1,6 @@
 package com.uteq.sgtic.backup.enums;
 
-//Días de la semana para tareas semanales.
+// Días de la semana para tareas semanales.
 public enum BackupDayOfWeek {
     MONDAY("MON"),
     TUESDAY("TUE"),

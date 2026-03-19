@@ -1,6 +1,7 @@
 package com.uteq.sgtic.backup.runner;
 
-import com.uteq.sgtic.backup.service.BackupService;
+import com.uteq.sgtic.backup.enums.BackupType;
+import com.uteq.sgtic.backup.service.BackupManagerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -13,19 +14,18 @@ import org.springframework.stereotype.Component;
 @ConditionalOnProperty(prefix = "backup", name = "run", havingValue = "true")
 public class BackupCliRunner implements CommandLineRunner {
 
-    private final BackupService backupService;
+    private final BackupManagerService backupManagerService;
 
     @Override
     public void run(String... args) {
-        log.info("Iniciando proceso automático de respaldo...");
+        log.info("Iniciando proceso automático de respaldo desde Tarea Programada de Windows...");
+        
+        backupManagerService.recoverInterruptedExecutions();
+        
+        // El script por defecto ejecutará un FULL, podrías luego parametrizarlo
+        backupManagerService.runBackup(BackupType.FULL, "SYSTEM", null);
 
-        // Limpia ejecuciones previas que quedaron colgadas
-        backupService.recoverInterruptedExecutions();
-
-        int exitCode = backupService.runFullBackup("SYSTEM", null);
-
-        log.info("Proceso de respaldo finalizado con código {}", exitCode);
-
-        System.exit(exitCode);
+        log.info("Proceso de respaldo finalizado. Cerrando aplicativo temporal...");
+        System.exit(0);
     }
 }
