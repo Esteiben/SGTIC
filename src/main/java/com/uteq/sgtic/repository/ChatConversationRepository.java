@@ -19,4 +19,9 @@ public interface ChatConversationRepository extends JpaRepository<ChatConversati
 
     @Query("SELECT c FROM ChatConversation c WHERE c.idCoordinador = :idCoordinador")
     List<ChatConversation> findByCoordinador(@Param("idCoordinador") Long idCoordinador);
+
+    Optional<ChatConversation> findByIdEstudianteAndIdCoordinador(
+            Long idEstudiante, Long idCoordinador
+    );
+    List<ChatConversation> findByIdCoordinador(Long idCoordinador);
 }

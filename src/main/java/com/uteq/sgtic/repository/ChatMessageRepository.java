@@ -18,16 +18,17 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessageEntity, 
     @Query("SELECT COUNT(m) FROM ChatMessageEntity m WHERE m.idConversacion = :idConversacion AND m.estado = 'enviado' AND m.idRemitente != :idUsuario")
     int countNoLeidos(@Param("idConversacion") Long idConversacion, @Param("idUsuario") Long idUsuario);
 
-    // ✅ OBTENER TODOS LOS MENSAJES ORDENADOS POR FECHA (ESTE FUNCIONA)
+    //  OBTENER TODOS LOS MENSAJES ORDENADOS POR FECHA (ESTE FUNCIONA)
     List<ChatMessageEntity> findAllByOrderByFechaEnvioAsc();
 
-    // ✅ MeTODO CORREGIDO PARA BUSCAR POR CORREO (USANDO CONSULTA NATIVA)
+    //  MeTODO CORREGIDO PARA BUSCAR POR CORREO (USANDO CONSULTA NATIVA)
     @Query(value = "SELECT cm.* FROM chat_messages cm " +
             "JOIN usuario u ON cm.id_remitente = u.id_usuario " +
             "WHERE u.correo = :correo " +
             "ORDER BY cm.fecha_envio ASC", nativeQuery = true)
     List<ChatMessageEntity> findByUsuarioCorreo(@Param("correo") String correo);
 
-    // ✅ OPCIÓN 2: Si prefieres no usar el método, puedes comentarlo temporalmente
-    // List<ChatMessageEntity> findByUsuarioCorreo(String correo);
+    // Usamos una Query manual para evitar errores de nombres de propiedad
+    @Query("SELECT m FROM ChatMessageEntity m WHERE m.idConversacion = :idConversacion ORDER BY m.fechaEnvio ASC")
+    List<ChatMessageEntity> findByConversacionPersonalizada(@Param("idConversacion") Long idConversacion);
 }
