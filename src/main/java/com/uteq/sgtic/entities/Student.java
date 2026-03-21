@@ -25,13 +25,6 @@ public class Student {
     @JoinColumn(name = "id_carrera", nullable = false)
     private Career career;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_periodo", nullable = false)
-    private AcademicPeriod academicPeriod;
-
     @Column(name = "estado_titulacion", nullable = false, length = 20)
     private String degreeStatus;
-
-
-
 }

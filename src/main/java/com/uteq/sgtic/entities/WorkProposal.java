@@ -31,9 +31,10 @@ public class WorkProposal {
     @JoinColumn(name = "id_tema_propuesto")
     private StudentProposedTopic proposedTopic;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_periodo", nullable = false)
-    private AcademicPeriod academicPeriod;
+    // Campo de período eliminado/comentado según indicación
+    // @ManyToOne(optional = false)
+    // @JoinColumn(name = "id_periodo", nullable = false)
+    // private AcademicPeriod academicPeriod;
 
     @Column(name = "fecha_envio", nullable = false)
     private LocalDate sentDate;

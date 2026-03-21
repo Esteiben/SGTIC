@@ -1,19 +1,18 @@
 package com.uteq.sgtic.services.impl.requestAccessImpl;
 
-import com.uteq.sgtic.dtos.requestAccess.RequestAccessDTO;
-import com.uteq.sgtic.entities.AcademicPeriod;
-import com.uteq.sgtic.entities.AdmissionRequest;
-import com.uteq.sgtic.entities.Career;
-import com.uteq.sgtic.repository.AcademicPeriodRepository;
-import com.uteq.sgtic.repository.CareerRepository;
-import com.uteq.sgtic.repository.requestAccess.RequestAccessRepository;
-import com.uteq.sgtic.services.requestAccess.IRequestAccessServices;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.List;
+import com.uteq.sgtic.dtos.requestAccess.RequestAccessDTO;
+import com.uteq.sgtic.dtos.requestAccess.SelectionItemDTO;
+import com.uteq.sgtic.repository.General.NCareerRepository;
+import com.uteq.sgtic.repository.General.NFacultyRepository;
+import com.uteq.sgtic.repository.requestAccess.RequestAccessRepository;
+import com.uteq.sgtic.services.requestAccess.IRequestAccessServices;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -21,65 +20,47 @@ import java.util.List;
 public class RequestAccessServiceImpl implements IRequestAccessServices {
 
     private final RequestAccessRepository requestAccessRepository;
-    private final CareerRepository careerRepository;
-    private final AcademicPeriodRepository academicPeriodRepository;
+    private final NFacultyRepository facultyRepository;
+    private final NCareerRepository careerRepository;
 
     @Override
     public void createRequest(RequestAccessDTO dto) {
+        // 1. Validaciones básicas de entrada
         validarDto(dto);
 
-        List<String> estadosBloqueantes = List.of("pendiente", "aprobada");
+        // 2. Llamar directamente a la función de la base de datos
+        RequestAccessRepository.RequestResultProjection result = requestAccessRepository.enviarSolicitud(
+                dto.getIdentificacion().trim(),
+                dto.getNombres().trim(),
+                dto.getApellidos().trim(),
+                dto.getCorreo().trim().toLowerCase(),
+                dto.getIdCarrera(),
+                dto.getIdFacultad()
+        );
 
-        boolean existePorIdentificacion = requestAccessRepository
-                .existsByIdentificationAndAcademicPeriod_IdPeriodAndStatusIn(
-                        dto.getIdentificacion().trim(),
-                        dto.getIdPeriodo(),
-                        estadosBloqueantes
-                );
-
-        if (existePorIdentificacion) {
-            throw new IllegalStateException(
-                    "Ya existe una solicitud pendiente o aprobada para este estudiante en ese período"
-            );
+        // 3. Evaluar la respuesta de PostgreSQL
+        if (result == null || !result.getExito()) {
+            // Si la base de datos detectó un duplicado o falta de periodo, lanzamos el mensaje exacto
+            String errorMsg = result != null ? result.getMensaje() : "Error desconocido al procesar la solicitud.";
+            throw new IllegalStateException(errorMsg);
         }
+        
+        // Si exito es true, la función insertó correctamente y no hacemos nada más.
+    }
 
-        boolean existePorCorreo = requestAccessRepository
-                .existsByEmailAndAcademicPeriod_IdPeriodAndStatusIn(
-                        dto.getCorreo().trim().toLowerCase(),
-                        dto.getIdPeriodo(),
-                        estadosBloqueantes
-                );
+    @Override
+    public List<SelectionItemDTO> getFaculties() {
+        // Obtenemos el catálogo de facultades activas
+        return facultyRepository.findAllActiveFaculties();
+    }
 
-        if (existePorCorreo) {
-            throw new IllegalStateException(
-                    "Ya existe una solicitud registrada con ese correo para ese período"
-            );
+    @Override
+    public List<SelectionItemDTO> getCareersByFaculty(Integer idFacultad) {
+        // Obtenemos el catálogo de carreras filtradas por facultad
+        if (idFacultad == null) {
+            throw new IllegalArgumentException("El ID de la facultad es requerido");
         }
-
-        Career career = careerRepository.findById(dto.getIdCarrera())
-                .orElseThrow(() -> new IllegalArgumentException("La carrera no existe"));
-
-        AcademicPeriod academicPeriod = academicPeriodRepository.findById(dto.getIdPeriodo())
-                .orElseThrow(() -> new IllegalArgumentException("El período no existe"));
-
-        AdmissionRequest request = new AdmissionRequest();
-        request.setIdentification(dto.getIdentificacion().trim());
-        request.setFirstName(dto.getNombres().trim());
-        request.setLastName(dto.getApellidos().trim());
-        request.setEmail(dto.getCorreo().trim().toLowerCase());
-        request.setStatus("pendiente");
-        request.setObservations(null);
-        request.setResponseDate(null);
-        request.setCareer(career);
-        request.setAcademicPeriod(academicPeriod);
-
-        // --- AQUÍ ESTÁN LOS 3 CAMPOS NUEVOS QUE AGREGAMOS ---
-        request.setIdFaculty(dto.getIdFacultad());
-        request.setSubmissionDate(LocalDate.now()); // Fecha de hoy
-        request.setRequestedLevel(1); // Nivel 1 por defecto
-        // ----------------------------------------------------
-
-        requestAccessRepository.save(request);
+        return careerRepository.findCareersByFacultyId(idFacultad);
     }
 
     private void validarDto(RequestAccessDTO dto) {
@@ -103,18 +84,12 @@ public class RequestAccessServiceImpl implements IRequestAccessServices {
             throw new IllegalArgumentException("El correo es obligatorio");
         }
         
-        // --- VALIDACIÓN DE FACULTAD QUE FALTABA ---
         if (dto.getIdFacultad() == null) {
             throw new IllegalArgumentException("La facultad es obligatoria");
         }
-        // ------------------------------------------
 
         if (dto.getIdCarrera() == null) {
             throw new IllegalArgumentException("La carrera es obligatoria");
-        }
-
-        if (dto.getIdPeriodo() == null) {
-            throw new IllegalArgumentException("El período es obligatorio");
-        }
+        }        
     }
 }

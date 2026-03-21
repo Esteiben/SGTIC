@@ -10,5 +10,4 @@ public class RequestAccessDTO {
     private String correo;
     private Integer idFacultad;
     private Integer idCarrera;
-    private Integer idPeriodo;
 }

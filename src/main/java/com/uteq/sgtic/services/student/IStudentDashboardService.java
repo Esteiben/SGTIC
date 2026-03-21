@@ -1,7 +1,7 @@
-package com.uteq.sgtic.services.student;
+    package com.uteq.sgtic.services.student;
 
-import com.uteq.sgtic.dtos.student.DashboardStatusDTO;
+    import com.uteq.sgtic.dtos.student.mainDashboard.DashboardStatusDTO;
 
-public interface IStudentDashboardService {
-    DashboardStatusDTO getDashboardStatus(Integer userId, Integer periodoId);
-}
+    public interface IStudentDashboardService {
+        DashboardStatusDTO getDashboardStatus(Integer userId, Integer periodoId);
+    }
