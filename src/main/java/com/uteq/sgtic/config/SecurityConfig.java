@@ -1,6 +1,5 @@
 package com.uteq.sgtic.config;
 
-
 import com.uteq.sgtic.config.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,22 +43,28 @@ public class SecurityConfig {
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/request-access/**").permitAll()
-                    .requestMatchers("/chat-socket/**").permitAll()
+                .requestMatchers("/chat-socket/**").permitAll()
                 .requestMatchers("/api/public/selection/**").permitAll()
                 .requestMatchers("/api/solicitudes/**").permitAll()
-                    .requestMatchers("/api/common/**").authenticated()
-                    .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods")
+                .requestMatchers("/api/common/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods")
                     .hasAnyAuthority("administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
-                .requestMatchers("/chat-socket/**").permitAll()
 
                 // OAuth Google Drive público
                 .requestMatchers("/api/admin/drive/oauth/**").permitAll()
+                
+                // === NUEVO: PERMISO PARA EL SCRIPT DE WINDOWS ===
+                .requestMatchers(HttpMethod.POST, "/api/admin/backups/sync").permitAll()
+
                 .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods/active")
                     .hasAuthority("administrador_sgtic")
+                
+                // Bloqueo general para administradores
                 .requestMatchers("/api/admin/**")
                     .hasAuthority("administrador_sgtic")
+                
                 .requestMatchers("/api/coordinator/faculty/**")
                     .hasAnyAuthority("administrador_sgtic", "coordinador_facultad")
                 .requestMatchers("/api/coordinator/career/**")
@@ -121,7 +126,7 @@ public class SecurityConfig {
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // 👇 APLICAR A TODAS LAS RUTAS, NO SOLO /api/**
+
         source.registerCorsConfiguration("/**", configuration);
 
         return source;

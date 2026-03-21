@@ -33,7 +33,11 @@ public class WindowsTaskSchedulerService {
         command.add("/tn");
         command.add(schedule.getWindowsTaskName());
         command.add("/tr");
-        command.add(runnerScriptPath);
+        
+        // PASO DEL ID DINÁMICO AL SCRIPT
+        String commandToRun = "\"" + runnerScriptPath + "\" " + schedule.getCreatedBy();
+        command.add(commandToRun);
+        
         command.add("/sc");
 
         if (schedule.getFrequency() == BackupFrequency.DAILY) {

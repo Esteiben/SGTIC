@@ -61,4 +61,24 @@ public class BackupController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BackupMessageDTO("Error de restauración: " + e.getMessage()));
         }
     }
+
+    // Endpoint para sincronización desde la interfaz
+    @PostMapping("/sync")
+    public ResponseEntity<?> syncToSecondaryDatabase(
+            @RequestParam Integer adminId, 
+            @RequestParam(required = false, defaultValue = "") String cronKey) {
+            
+        if (!cronKey.equals("SGTIC_SECRET_CRON_2026")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new BackupMessageDTO("Acceso denegado. Llave de tarea programada inválida."));
+        }
+
+        try {
+            backupManagerService.syncToSecondary(adminId);
+            return ResponseEntity.ok(new BackupMessageDTO("Sincronización automática completada con éxito."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new BackupMessageDTO("Error en sincronización: " + e.getMessage()));
+        }
+    }
 }

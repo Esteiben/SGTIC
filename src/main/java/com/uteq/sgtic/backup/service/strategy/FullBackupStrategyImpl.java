@@ -7,6 +7,7 @@ import com.uteq.sgtic.backup.repository.BackupExecutionRepository;
 import com.uteq.sgtic.backup.service.GoogleDriveStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -29,6 +30,22 @@ public class FullBackupStrategyImpl implements IBackupStrategy {
     private final BackupExecutionRepository executionRepository;
     private final GoogleDriveStorageService driveStorageService;
 
+    // --- CREDENCIALES BASE SECUNDARIA (Inyectadas desde properties) ---
+    @Value("${backup.restore.host:localhost}")
+    private String restoreHost;
+
+    @Value("${backup.restore.port:5432}")
+    private Integer restorePort;
+
+    @Value("${backup.restore.db-name:sgtic_secundaria}")
+    private String restoreDbName;
+
+    @Value("${backup.restore.user:postgres}")
+    private String restoreUser;
+
+    @Value("${backup.restore.password:}")
+    private String restorePassword;
+
     @Override
     public boolean supports(BackupType type) { return type == BackupType.FULL; }
 
@@ -42,7 +59,6 @@ public class FullBackupStrategyImpl implements IBackupStrategy {
         Path finalZipFile = backupDir.resolve(baseFileName + ".zip");
         Path logFile = backupDir.resolve(baseFileName + ".log");
 
-        // Llamada a SQL Stored Procedure
         Long executionId = executionRepository.iniciarEjecucion(
                 config.getId(), idUsuario, "FULL", triggeredBy, finalZipFile.getFileName().toString(), finalZipFile.toString()
         );
@@ -74,7 +90,6 @@ public class FullBackupStrategyImpl implements IBackupStrategy {
                 throw new RuntimeException("Error ejecutando pg_dump.");
             }
 
-            // Comprimir a ZIP
             compressToZip(tempDbFile, finalZipFile);
 
             long sizeBytes = Files.size(finalZipFile);
@@ -94,7 +109,7 @@ public class FullBackupStrategyImpl implements IBackupStrategy {
         BackupExecution execution = executionRepository.findById(executionId).orElseThrow();
         Path zipFilePath = Paths.get(execution.getFilePath());
         
-        if (!Files.exists(zipFilePath)) throw new IllegalStateException("El archivo ZIP no existe físicamente en el servidor.");
+        zipFilePath = driveStorageService.downloadBackupIfMissing(config, execution, zipFilePath);
 
         Path extractedBackupFile = null;
         try {
@@ -105,25 +120,31 @@ public class FullBackupStrategyImpl implements IBackupStrategy {
 
             List<String> command = new ArrayList<>();
             command.add(pgRestorePath);
-            command.add("-h"); command.add(config.getDatabaseHost());
-            command.add("-p"); command.add(String.valueOf(config.getDatabasePort()));
-            command.add("-U"); command.add(config.getDatabaseUser());
-            command.add("-v");
-            command.add("-d"); command.add(config.getDatabaseName());
-            command.add("-c"); 
+            command.add("-h"); command.add(restoreHost);
+            command.add("-p"); command.add(String.valueOf(restorePort));
+            command.add("-U"); command.add(restoreUser);
+            command.add("-d"); command.add(restoreDbName);
+            command.add("-v"); 
+            command.add("-c");
             command.add("--if-exists");
             command.add(extractedBackupFile.toString());
 
             ProcessBuilder pb = new ProcessBuilder(command);
-            if (StringUtils.hasText(config.getPgpassFilePath())) pb.environment().put("PGPASSFILE", config.getPgpassFilePath());
+            
+            if (StringUtils.hasText(restorePassword)) {
+                pb.environment().put("PGPASSWORD", restorePassword);
+            }
+            pb.environment().put("PGSSLMODE", "require");
 
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+            
             Process process = pb.start();
             boolean finished = process.waitFor(45, TimeUnit.MINUTES);
 
-            if (!finished || process.exitValue() != 0) throw new RuntimeException("Error ejecutando pg_restore.");
+            if (!finished || process.exitValue() != 0) throw new RuntimeException("Error ejecutando pg_restore en la base secundaria.");
 
-            // Llama a Stored Procedure
-            executionRepository.registrarRestauracion(executionId, idUsuarioAdmin, "Restauración exitosa a partir del archivo " + zipFilePath.getFileName());
+            executionRepository.registrarRestauracion(executionId, idUsuarioAdmin, "Restauración exitosa a la Base Secundaria (DB: " + restoreDbName + ") a partir del archivo " + zipFilePath.getFileName());
 
         } catch (Exception e) {
             log.error("Error restaurando la base de datos", e);
@@ -162,7 +183,7 @@ public class FullBackupStrategyImpl implements IBackupStrategy {
                 }
             }
         }
-        if (extractedFile == null) throw new IOException("El archivo ZIP está vacío.");
+        if (extractedFile == null) throw new IOException("El archivo ZIP está vacío o dañado.");
         return extractedFile;
     }
 }

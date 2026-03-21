@@ -170,4 +170,46 @@ public class GoogleDriveStorageService {
 
     private record DriveUploadResult(String fileId, String fileName, String webViewLink) {
     }
+
+    public Path downloadBackupIfMissing(BackupConfig config, BackupExecution execution, Path localPath) {
+        if (Files.exists(localPath)) {
+            log.info("El archivo de backup existe localmente. No es necesario descargar de Drive.");
+            return localPath;
+        }
+
+        if (!Boolean.TRUE.equals(execution.getDriveUploaded()) || !StringUtils.hasText(execution.getDriveFileId())) {
+            throw new IllegalStateException("El archivo ya no existe en el servidor local y NUNCA se subió a Google Drive. Restauración imposible.");
+        }
+
+        BackupDriveAccount account = backupDriveAccountRepository.findByIdAndActiveTrue(config.getDriveAccountId())
+                .orElseThrow(() -> new IllegalStateException("Cuenta de Drive vinculada no está activa o disponible."));
+
+        log.info("Archivo local no encontrado. Iniciando descarga de emergencia desde Google Drive (ID: {})...", execution.getDriveFileId());
+        
+        try {
+            String accessToken = googleDriveAuthService.refreshAccessToken(account);
+            
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://www.googleapis.com/drive/v3/files/" + execution.getDriveFileId() + "?alt=media"))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .GET()
+                    .build();
+
+            // Asegurarnos de que el directorio exista
+            Files.createDirectories(localPath.getParent());
+
+            HttpResponse<Path> response = httpClient.send(request, HttpResponse.BodyHandlers.ofFile(localPath));
+
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                Files.deleteIfExists(localPath);
+                throw new IllegalStateException("Google Drive denegó la descarga. Código HTTP: " + response.statusCode());
+            }
+            
+            log.info("¡Descarga de Drive completada con éxito!");
+            return localPath;
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Falló la descarga de recuperación desde Google Drive: " + e.getMessage(), e);
+        }
+    }
 }
