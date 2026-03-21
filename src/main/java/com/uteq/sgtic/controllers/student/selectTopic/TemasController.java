@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,36 +42,20 @@ public class TemasController {
             Authentication authentication
     ) {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
-        
-        return ResponseEntity.ok(
-                processSetupService.getTemasDisponibles(idPeriodo, idEstudiante, idOpcion)
-        );
+        return ResponseEntity.ok(processSetupService.getTemasDisponibles(idPeriodo, idEstudiante, idOpcion));
     }
 
+    // =======================================================
+    // ENDPOINT ESTADO ACTUALIZADO (Conectado a la BD)
+    // =======================================================
     @GetMapping("/estado")
     public ResponseEntity<TopicSelectionStatusDTO> getEstado(
             @RequestParam Integer idPeriodo,
             Authentication authentication
     ) {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
-
-        // TODO: En el futuro, llenar este DTO llamando a una función de PostgreSQL 
-        // pasándole el idEstudiante y el idPeriodo.
-        TopicSelectionStatusDTO dto = new TopicSelectionStatusDTO();
-        dto.setEstadoTitulacion("EN_PROCESO");
-        dto.setTipoTemaActual("NINGUNO");
-        dto.setFueraDePlazo(false);
-        dto.setDesactivadoPorPlazo(false);
-        dto.setTieneProcesoTema(false);
-        dto.setTieneSeleccionBanco(false);
-        dto.setPuedeSeleccionar(true);
-        dto.setPuedeProponer(true);
-        dto.setPuedeCambiarTema(false);
-        dto.setCambiosTemaRealizados(0);
-        dto.setFechaLimiteSeleccion(null);
-        dto.setMensaje("Selecciona una modalidad y luego el tema de titulación.");
-        
-        return ResponseEntity.ok(dto);
+        // Se conecta a la BD para validar plazos, intentos y estados de las propuestas
+        return ResponseEntity.ok(topicSelectionService.getEstado(idEstudiante, idPeriodo));
     }
 
     @GetMapping("/propuestas-estudiante")
@@ -79,10 +64,7 @@ public class TemasController {
             Authentication authentication
     ) {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
-        
-        return ResponseEntity.ok(
-                processSetupService.getStudentProposals(idPeriodo, idEstudiante)
-        );
+        return ResponseEntity.ok(processSetupService.getStudentProposals(idPeriodo, idEstudiante));
     }
 
     @PostMapping("/seleccion")
@@ -91,13 +73,9 @@ public class TemasController {
             Authentication authentication
     ) {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
-        
-        TopicSelectionResponseDTO response =
-                topicSelectionService.procesarSeleccionOCambio(idEstudiante, request);
+        TopicSelectionResponseDTO response = topicSelectionService.procesarSeleccionOCambio(idEstudiante, request);
 
-        if (Boolean.TRUE.equals(response.getExito())) {
-            return ResponseEntity.ok(response);
-        }
+        if (Boolean.TRUE.equals(response.getExito())) return ResponseEntity.ok(response);
         return ResponseEntity.badRequest().body(response);
     }
 
@@ -113,20 +91,36 @@ public class TemasController {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
         String urlDocumento = null;
 
-        // Si se envió un archivo, se debe procesar (ej. subir a Azure Blob Storage)
         if (documento != null && !documento.isEmpty()) {
-            // TODO: Descomentar e implementar tu servicio de Azure
             // urlDocumento = azureStorageService.uploadFile(documento);
         }
         
-        // Llamada al servicio que ejecuta la función SQL
         TopicSelectionResponseDTO response = topicSelectionService.registrarPropuesta(
-                idEstudiante, 
-                idPeriodo, 
-                idOpcion, 
-                titulo, 
-                descripcion, 
-                urlDocumento
+                idEstudiante, idPeriodo, idOpcion, titulo, descripcion, urlDocumento
+        );
+
+        if (Boolean.TRUE.equals(response.getExito())) return ResponseEntity.ok(response);
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @PutMapping(value = "/propuestas-estudiante/{idPropuesta}", consumes = {"multipart/form-data"})
+    public ResponseEntity<TopicSelectionResponseDTO> actualizarPropuesta(
+            @PathVariable("idPropuesta") Integer idPropuesta,
+            @RequestParam("idOpcion") Integer idOpcion,
+            @RequestParam("titulo") String titulo,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam(value = "documento", required = false) MultipartFile documento,
+            Authentication authentication
+    ) {
+        Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
+        String urlDocumento = null;
+
+        if (documento != null && !documento.isEmpty()) {
+            // urlDocumento = azureStorageService.uploadFile(documento);
+        }
+        
+        TopicSelectionResponseDTO response = topicSelectionService.actualizarPropuesta(
+                idPropuesta, idEstudiante, idOpcion, titulo, descripcion, urlDocumento
         );
 
         if (Boolean.TRUE.equals(response.getExito())) {

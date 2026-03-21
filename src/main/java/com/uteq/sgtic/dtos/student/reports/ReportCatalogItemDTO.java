@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class ReportCatalogItemDTO {
-    private StudentReportType type;
+    private String type;
     private String title;
     private String description;
     private String dataEndpoint;
