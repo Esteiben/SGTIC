@@ -74,7 +74,8 @@ public class UserManagementServiceImpl implements IUserManagementService {
                     hashedPassword,
                     rolesArray,
                     request.getIdCareer(),
-                    request.getIdPeriod()
+                    request.getIdPeriod(),
+                    request.getIdFaculty()
             );
 
             // Respuesta
