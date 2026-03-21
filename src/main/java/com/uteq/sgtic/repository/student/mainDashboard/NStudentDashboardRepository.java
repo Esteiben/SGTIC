@@ -31,4 +31,6 @@ public interface NStudentDashboardRepository extends JpaRepository<User, Integer
         String getNombre_opcion();
         Integer getTotal_tutorias();
     }
+
+    //segundo comentario de prueba borrar
 }
