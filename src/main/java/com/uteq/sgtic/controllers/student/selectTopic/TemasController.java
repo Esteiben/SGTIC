@@ -21,6 +21,7 @@ import com.uteq.sgtic.dtos.student.selectTopic.TopicSelectionRequestDTO;
 import com.uteq.sgtic.dtos.student.selectTopic.TopicSelectionResponseDTO;
 import com.uteq.sgtic.dtos.student.selectTopic.TopicSelectionStatusDTO;
 import com.uteq.sgtic.repository.student.selectTopic.ProcessSetupRepository;
+import com.uteq.sgtic.services.AzureStorageConfig;
 import com.uteq.sgtic.services.student.selectTopic.IProcessSetupService;
 import com.uteq.sgtic.services.student.selectTopic.ITopicSelectionService;
 
@@ -34,6 +35,7 @@ public class TemasController {
 
     private final IProcessSetupService processSetupService;
     private final ITopicSelectionService topicSelectionService;
+    private final AzureStorageConfig azureStorageConfig;
 
     @GetMapping("/disponibles")
     public ResponseEntity<List<TemaDTO>> getTemasDisponibles(
@@ -91,16 +93,25 @@ public class TemasController {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
         String urlDocumento = null;
 
-        if (documento != null && !documento.isEmpty()) {
-            // urlDocumento = azureStorageService.uploadFile(documento);
-        }
-        
-        TopicSelectionResponseDTO response = topicSelectionService.registrarPropuesta(
-                idEstudiante, idPeriodo, idOpcion, titulo, descripcion, urlDocumento
-        );
+        try {
+            // Si hay un documento adjunto, lo subimos a Azure primero
+            if (documento != null && !documento.isEmpty()) {
+                urlDocumento = azureStorageConfig.subirDocumento(documento);
+            }
+            
+            TopicSelectionResponseDTO response = topicSelectionService.registrarPropuesta(
+                    idEstudiante, idPeriodo, idOpcion, titulo, descripcion, urlDocumento
+            );
 
-        if (Boolean.TRUE.equals(response.getExito())) return ResponseEntity.ok(response);
-        return ResponseEntity.badRequest().body(response);
+            if (Boolean.TRUE.equals(response.getExito())) return ResponseEntity.ok(response);
+            return ResponseEntity.badRequest().body(response);
+
+        } catch (Exception e) {
+            // Manejo de errores en caso de que Azure falle
+            return ResponseEntity.badRequest().body(
+                new TopicSelectionResponseDTO(false, "Error al subir el documento a la nube: " + e.getMessage())
+            );
+        }
     }
 
     @PutMapping(value = "/propuestas-estudiante/{idPropuesta}", consumes = {"multipart/form-data"})
@@ -115,18 +126,27 @@ public class TemasController {
         Integer idEstudiante = processSetupService.getIdEstudianteByUsername(authentication.getName());
         String urlDocumento = null;
 
-        if (documento != null && !documento.isEmpty()) {
-            // urlDocumento = azureStorageService.uploadFile(documento);
-        }
-        
-        TopicSelectionResponseDTO response = topicSelectionService.actualizarPropuesta(
-                idPropuesta, idEstudiante, idOpcion, titulo, descripcion, urlDocumento
-        );
+        try {
+            // Si el estudiante adjunta un nuevo documento, lo subimos a Azure
+            if (documento != null && !documento.isEmpty()) {
+                urlDocumento = azureStorageConfig.subirDocumento(documento);
+            }
+            
+            TopicSelectionResponseDTO response = topicSelectionService.actualizarPropuesta(
+                    idPropuesta, idEstudiante, idOpcion, titulo, descripcion, urlDocumento
+            );
 
-        if (Boolean.TRUE.equals(response.getExito())) {
-            return ResponseEntity.ok(response);
+            if (Boolean.TRUE.equals(response.getExito())) {
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.badRequest().body(response);
+
+        } catch (Exception e) {
+            // Manejo de errores en caso de que Azure falle
+            return ResponseEntity.badRequest().body(
+                new TopicSelectionResponseDTO(false, "Error al subir el nuevo documento a la nube: " + e.getMessage())
+            );
         }
-        return ResponseEntity.badRequest().body(response);
     }
 
     // ==========================================
