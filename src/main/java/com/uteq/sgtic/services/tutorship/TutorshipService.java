@@ -13,7 +13,9 @@ import com.uteq.sgtic.repository.tutorship.WorkTutoringRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.*;
+import java.util.UUID;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,6 @@ public class TutorshipService {
         }
 
         WorkTutoring tutorship = new WorkTutoring();
-        // Solo asignamos el DegreeWork, ya que este contiene al director y al estudiante
         tutorship.setDegreeWork(degreeWork);
         tutorship.setDate(request.getDate());
         tutorship.setType(request.getType());
@@ -85,22 +86,23 @@ public class TutorshipService {
 
     // Registrar el reporte de la tutoria
     @Transactional
-    public void registerTutorshipReport(Integer idTutoring, TutorshipReportDTO reportData, String userEmail, String fileUrl) {
+    public void registerTutorshipReport(Integer idTutoring, TutorshipReportDTO reportData, String userEmail, MultipartFile file) {
 
         Teacher director = teacherRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Teacher profile not found."));
+                .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
 
         WorkTutoring tutorship = workTutoringRepository.findById(idTutoring)
-                .orElseThrow(() -> new RuntimeException("Tutorship not found."));
+                .orElseThrow(() -> new RuntimeException("Tutoría no encontrada"));
 
-        // Validamos la propiedad navegando a través de DegreeWork
         if (!tutorship.getDegreeWork().getDirector().getIdTeacher().equals(director.getIdTeacher())) {
-            throw new RuntimeException("Unauthorized: You cannot modify this tutorship.");
+            throw new RuntimeException("No tiene permisos para registrar esta tutoría");
         }
+
+        String fileName = saveFile(file);
 
         tutorship.setAttendance(reportData.getAttendance());
         tutorship.setObservations(reportData.getObservations());
-        tutorship.setReportUrl(fileUrl);
+        tutorship.setReportUrl(fileName);
         tutorship.setRegistered(true);
 
         workTutoringRepository.save(tutorship);
@@ -129,5 +131,21 @@ public class TutorshipService {
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    private String saveFile(MultipartFile file) {
+        try {
+            String uploadDir = "uploads/reports/";
+            Files.createDirectories(Paths.get(uploadDir));
+
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path path = Paths.get(uploadDir + fileName);
+
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+            return fileName;
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar el archivo PDF: " + e.getMessage());
+        }
     }
 }
