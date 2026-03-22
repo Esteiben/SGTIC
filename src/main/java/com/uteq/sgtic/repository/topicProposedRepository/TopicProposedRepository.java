@@ -17,6 +17,10 @@ public interface TopicProposedRepository extends JpaRepository<StudentProposedTo
 
     @Modifying
     @Transactional
-    @Query(value = "CALL sp_responder_propuesta(:idPropuesta, :nuevoEstado)", nativeQuery = true)
-    void responderPropuesta(@Param("idPropuesta") Integer idPropuesta, @Param("nuevoEstado") String nuevoEstado);
+    @Query(value = "CALL sp_responder_propuesta(:idPropuesta, :nuevoEstado, :motivo)", nativeQuery = true)
+    void responderPropuesta(
+            @Param("idPropuesta") Integer idPropuesta,
+            @Param("nuevoEstado") String nuevoEstado,
+            @Param("motivo") String motivo
+    );
 }

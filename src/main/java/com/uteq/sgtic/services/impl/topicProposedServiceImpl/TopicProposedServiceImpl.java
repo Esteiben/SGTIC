@@ -33,7 +33,7 @@ public class TopicProposedServiceImpl implements ITopicProposedService {
     }
 
     @Override
-    public void procesarPropuesta(Integer idPropuesta, String estado) {
-        repository.responderPropuesta(idPropuesta, estado);
+    public void procesarPropuesta(Integer idPropuesta, String estado, String motivo) {
+        repository.responderPropuesta(idPropuesta, estado, motivo);
     }
 }

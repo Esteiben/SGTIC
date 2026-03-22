@@ -27,4 +27,5 @@ public class Student {
 
     @Column(name = "estado_titulacion", nullable = false, length = 20)
     private String degreeStatus;
+
 }

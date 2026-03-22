@@ -22,8 +22,11 @@ public class TopicProposedControllers {
     }
 
     @PostMapping("/responder")
-    public ResponseEntity<Void> responderPropuesta(@RequestParam Integer idPropuesta, @RequestParam String estado) {
-        proposedService.procesarPropuesta(idPropuesta, estado);
+    public ResponseEntity<Void> responderPropuesta(
+            @RequestParam Integer idPropuesta,
+            @RequestParam String estado,
+            @RequestParam(required = false) String motivo) {
+        proposedService.procesarPropuesta(idPropuesta, estado, motivo);
         return ResponseEntity.ok().build();
     }
 }
