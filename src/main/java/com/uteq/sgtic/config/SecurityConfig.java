@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -33,30 +34,48 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/public/request-access/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
-                        .requestMatchers("/api/solicitudes/**").permitAll()
-                        .requestMatchers("/api/public/selection/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasAuthority("administrador_sgtic")
-                        .requestMatchers("/api/coordinator/faculty/**").hasAnyAuthority(
-                                "administrador_sgtic", "coordinador_facultad")
-                        .requestMatchers("/api/coordinator/career/**").hasAnyAuthority(
-                                "administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
-                        .requestMatchers("/api/teacher/**").hasAnyAuthority(
-                                "administrador_sgtic", "docente", "director_trabajo_titulacion")
-                        .requestMatchers("/api/student/**").hasAuthority("estudiante")
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/request-access/**").permitAll()
+                .requestMatchers("/chat-socket/**").permitAll()
+                .requestMatchers("/api/public/selection/**").permitAll()
+                .requestMatchers("/api/solicitudes/**").permitAll()
+                .requestMatchers("/api/common/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/aprobar/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/solicitudes/rechazar/**").permitAll()
+
+                // OAuth Google Drive público
+                .requestMatchers("/api/admin/drive/oauth/**").permitAll()
+                
+                // === NUEVO: PERMISO PARA EL SCRIPT DE WINDOWS ===
+                .requestMatchers(HttpMethod.POST, "/api/admin/backups/sync").permitAll()
+
+                .requestMatchers(HttpMethod.GET, "/api/admin/catalog/periods/active")
+                    .hasAuthority("administrador_sgtic")
+                
+                // Bloqueo general para administradores
+                .requestMatchers("/api/admin/**")
+                    .hasAuthority("administrador_sgtic")
+                
+                .requestMatchers("/api/coordinator/faculty/**")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad")
+                .requestMatchers("/api/coordinator/career/**")
+                    .hasAnyAuthority("administrador_sgtic", "coordinador_facultad", "coordinador_carrera")
+                .requestMatchers("/api/teacher/**")
+                    .hasAnyAuthority("administrador_sgtic", "docente", "director_trabajo_titulacion")
+                .requestMatchers("/api/student/**")
+                    .hasAuthority("estudiante")
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -74,8 +93,17 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+        //  IMPORTANTE: Usar allowedOriginPatterns en lugar de allowedOrigins
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:4200",
+                "https://localhost:4200"
+        ));
+
+        configuration.setAllowedMethods(Arrays.asList(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+        ));
+
         configuration.setAllowedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type",
@@ -83,18 +111,24 @@ public class SecurityConfig {
                 "Accept",
                 "Origin",
                 "Access-Control-Request-Method",
-                "Access-Control-Request-Headers"
+                "Access-Control-Request-Headers",
+                "Cache-Control",
+                "Pragma"
         ));
+
         configuration.setExposedHeaders(Arrays.asList(
                 "Access-Control-Allow-Origin",
-                "Access-Control-Allow-Credentials"
+                "Access-Control-Allow-Credentials",
+                "Authorization"
         ));
 
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+
+        source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }

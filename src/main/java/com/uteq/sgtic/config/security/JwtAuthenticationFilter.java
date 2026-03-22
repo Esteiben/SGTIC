@@ -26,6 +26,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/chat-socket");
+    }
+
+    @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
@@ -38,7 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.debug("Processing request: {} - Auth Header present: {}",
                 requestURI, authHeader != null);
 
-        // Si no hay header o no empieza con Bearer, continuar (dejar que Spring Security maneje)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.debug("No Bearer token found, continuing filter chain");
             filterChain.doFilter(request, response);
@@ -69,9 +74,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             log.error("Error processing JWT: {}", e.getMessage());
-            // No lanzar excepción, dejar que continue (el endpoint protegido rechazará si es necesario)
         }
 
+        
         filterChain.doFilter(request, response);
     }
 }

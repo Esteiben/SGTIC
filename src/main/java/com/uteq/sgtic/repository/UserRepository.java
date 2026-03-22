@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "SELECT public.sp_update_password(:userId, :newHash)", nativeQuery = true)
     Boolean updatePasswordSp(@Param("userId") Integer userId, @Param("newHash") String newHash);
+
+    Optional<User> findByEmail(String email);
 }

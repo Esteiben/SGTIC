@@ -23,14 +23,6 @@ public class WorkTutoring {
     @JoinColumn(name = "id_trabajo", nullable = false)
     private DegreeWork degreeWork;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_estudiante", nullable = false)
-    private Student student;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_director", nullable = false)
-    private Teacher director;
-
     @Column(name = "fecha", nullable = false)
     private LocalDate date;
 
@@ -42,4 +34,16 @@ public class WorkTutoring {
 
     @Column(name = "registrada", nullable = false)
     private Boolean registered;
+
+    @Column(name = "modalidad", length = 20)
+    private String modality;
+
+    @Column(name = "lugar_enlace", length = 255)
+    private String locationLink;
+
+    @Column(name = "asistencia")
+    private Boolean attendance;
+
+    @Column(name = "url_informe", length = 500)
+    private String reportUrl;
 }

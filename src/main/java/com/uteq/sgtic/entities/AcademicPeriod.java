@@ -31,6 +31,12 @@ public class AcademicPeriod {
     @Column(name = "fecha_limite_matriculacion", nullable = false)
     private LocalDate enrollmentDeadline;
 
+    @Column(name = "plazo_cambio_tema")
+    private Integer plazoCambioTema;
+
+    @Column(name = "minimo_avances")
+    private Integer minimoAvances;
+
     @Column(name = "activo", nullable = false)
     private Boolean active;
 }
