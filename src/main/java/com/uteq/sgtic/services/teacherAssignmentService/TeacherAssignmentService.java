@@ -74,25 +74,25 @@ public class TeacherAssignmentService {
 
         docenteRepository.asignarDirector(idPropuesta, idDocente, idPeriodoFinal);
 
-        try {
-            List<Object[]> datosParaCorreo = docenteRepository.findDatosParaNotificacion(idPropuesta, idDocente);
-
-            if (datosParaCorreo != null && !datosParaCorreo.isEmpty()) {
-                Object[] row = datosParaCorreo.get(0);
-                String correoDocente = (String) row[0];
-                String nombreDocente = (String) row[1];
-                String tituloProyecto = (String) row[2];
-                String nombreEstudiante = (String) row[3];
-
-                emailService.enviarNotificacionAsignacionDirector(
-                        correoDocente,
-                        nombreDocente,
-                        tituloProyecto,
-                        nombreEstudiante
-                );
-            }
-        } catch (Exception e) {
-            System.err.println("Asignación guardada en BD, pero falló el envío de correo: " + e.getMessage());
-        }
+//        try {
+//            List<Object[]> datosParaCorreo = docenteRepository.findDatosParaNotificacion(idPropuesta, idDocente);
+//
+//            if (datosParaCorreo != null && !datosParaCorreo.isEmpty()) {
+//                Object[] row = datosParaCorreo.get(0);
+//                String correoDocente = (String) row[0];
+//                String nombreDocente = (String) row[1];
+//                String tituloProyecto = (String) row[2];
+//                String nombreEstudiante = (String) row[3];
+//
+//                emailService.enviarNotificacionAsignacionDirector(
+//                        correoDocente,
+//                        nombreDocente,
+//                        tituloProyecto,
+//                        nombreEstudiante
+//                );
+//            }
+//        } catch (Exception e) {
+//            System.err.println("Asignación guardada en BD, pero falló el envío de correo: " + e.getMessage());
+//        }
     }
 }
