@@ -23,14 +23,6 @@ public class WorkTutoring {
     @JoinColumn(name = "id_trabajo", nullable = false)
     private DegreeWork degreeWork;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_estudiante", nullable = false)
-    private Student student;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_director", nullable = false)
-    private Teacher director;
-
     @Column(name = "fecha", nullable = false)
     private LocalDate date;
 

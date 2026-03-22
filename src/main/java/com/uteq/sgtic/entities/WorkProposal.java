@@ -20,15 +20,15 @@ public class WorkProposal {
     private Integer idProposal;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_estudiante", nullable = false)
-    private Student student;
+    @JoinColumn(name = "id_estudiante_periodo_titulacion", nullable = false)
+    private StudentDegreePeriod enrollment;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "id_tema", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_tema", nullable = true)
     private Topic topic;
 
-    @ManyToOne
-    @JoinColumn(name = "id_tema_propuesto")
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "id_tema_propuesto", nullable = true)
     private StudentProposedTopic proposedTopic;
 
     // Campo de período eliminado/comentado según indicación
