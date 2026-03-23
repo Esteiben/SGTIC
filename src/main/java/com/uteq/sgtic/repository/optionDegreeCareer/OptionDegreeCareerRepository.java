@@ -23,5 +23,4 @@ public interface OptionDegreeCareerRepository extends JpaRepository<CareerOption
             @Param("idOpcion") Integer idOpcion,
             @Param("seleccionado") Boolean seleccionado
     );
-
 }

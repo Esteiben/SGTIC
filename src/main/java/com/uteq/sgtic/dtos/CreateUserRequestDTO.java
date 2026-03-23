@@ -14,5 +14,4 @@ public class CreateUserRequestDTO {
     private List<Integer> roleIds;
     private Integer idCareer;
     private Integer idPeriod;
-    private Integer idFaculty;
 }

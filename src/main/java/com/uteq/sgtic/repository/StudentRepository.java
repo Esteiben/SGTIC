@@ -31,6 +31,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
                                                   @Param("estado") String estado,
                                                   @Param("idDirector") Integer idDirector);
 
+
+
 }
 
 

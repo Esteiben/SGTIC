@@ -74,8 +74,7 @@ public class UserManagementServiceImpl implements IUserManagementService {
                     hashedPassword,
                     rolesArray,
                     request.getIdCareer(),
-                    request.getIdPeriod(),
-                    request.getIdFaculty()
+                    request.getIdPeriod()
             );
 
             // Respuesta
@@ -107,7 +106,9 @@ public class UserManagementServiceImpl implements IUserManagementService {
                         p.getCorreo(),
                         p.getUsername(),
                         p.getActivo(),
-                        convertRolesToList(p.getRoles())
+                        convertRolesToList(p.getRoles()),
+                        p.getUltimoAcceso()
+
                 ))
                 .collect(Collectors.toList());
     }

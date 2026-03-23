@@ -12,6 +12,7 @@ public class DashboardStatusDTO {
     private boolean prerequisitosNivel1;
     private boolean temaSeleccionado;
     private boolean directorAsignado;
+    private boolean reunionesMinimas;
     private boolean defensaAnteproyecto;
 
     // Nivel 2
@@ -25,5 +26,4 @@ public class DashboardStatusDTO {
     private String nombreDirector;
     private String nombreOpcion;
     private Integer totalTutorias;
-    private Integer minimoTutorias;
 }

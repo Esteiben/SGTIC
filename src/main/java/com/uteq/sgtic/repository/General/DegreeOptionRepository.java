@@ -12,20 +12,18 @@ public interface DegreeOptionRepository extends JpaRepository<DegreeOption, Inte
 
     interface DegreeOptionProjection {
         Integer getIdOption();
-
         String getNombre();
-
         String getDescripcion();
     }
 
     @Query(value = """
-            SELECT
-                id_opcion AS idOption,
-                nombre,
-                descripcion
-            FROM v_opcion_titulacion_activa_por_carrera
-            WHERE id_carrera = ?1
-            ORDER BY nombre
-            """, nativeQuery = true)
+        SELECT
+            id_opcion AS idOption,
+            nombre,
+            descripcion
+        FROM v_opcion_titulacion_activa_por_carrera
+        WHERE id_carrera = ?1
+        ORDER BY nombre
+        """, nativeQuery = true)
     List<DegreeOptionProjection> findActiveByCareerId(Integer idCarrera);
 }
