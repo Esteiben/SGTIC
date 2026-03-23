@@ -24,5 +24,4 @@ public interface OptionDegreeCareerRepository extends JpaRepository<CareerOption
             @Param("seleccionado") Boolean seleccionado
     );
 
-    List<String> EstoNoVale();
 }

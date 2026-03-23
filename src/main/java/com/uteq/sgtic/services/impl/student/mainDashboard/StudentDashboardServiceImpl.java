@@ -28,7 +28,6 @@ public class StudentDashboardServiceImpl implements IStudentDashboardService {
                 .prerequisitosNivel1(d.getPrerequisitos_nivel1())
                 .temaSeleccionado(d.getTema_seleccionado())
                 .directorAsignado(d.getDirector_asignado())
-                .reunionesMinimas(d.getReuniones_minimas())
                 .defensaAnteproyecto(d.getDefensa_anteproyecto())
                 .prerequisitosNivel2(d.getPrerequisitos_nivel2())
                 .asistenciaTutorias(d.getAsistencia_tutorias())
@@ -38,6 +37,7 @@ public class StudentDashboardServiceImpl implements IStudentDashboardService {
                 .nombreDirector(d.getNombre_director())
                 .nombreOpcion(d.getNombre_opcion())
                 .totalTutorias(d.getTotal_tutorias())
+                .minimoTutorias(d.getMinimo_tutorias())
                 .build();
     }
 }
