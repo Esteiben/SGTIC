@@ -46,6 +46,7 @@ public interface UserManagementRepository extends JpaRepository<com.uteq.sgtic.e
         Boolean getActivo();
         String getUsername();
         String[] getRoles();  // Array de PostgreSQL
+        java.time.LocalDateTime getUltimoAcceso();
     }
 
     interface RoleProjection {

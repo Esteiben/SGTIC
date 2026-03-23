@@ -3,6 +3,7 @@ package com.uteq.sgtic.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuario")
@@ -33,6 +34,9 @@ public class User {
     @Column(name = "primer_ingreso")
     private Boolean primerIngreso;
 
+    @Column(name = "ultimo_acceso")
+    private LocalDateTime lastLogin;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Credential credential;
 
@@ -42,5 +46,6 @@ public class User {
             joinColumns = @JoinColumn(name = "id_usuario"),
             inverseJoinColumns = @JoinColumn(name = "id_rol")
     )
+
     private List<Role> roles;
 }
