@@ -20,7 +20,6 @@ public interface NStudentDashboardRepository extends JpaRepository<User, Integer
         Boolean getPrerequisitos_nivel1();
         Boolean getTema_seleccionado();
         Boolean getDirector_asignado();
-        Boolean getReuniones_minimas();
         Boolean getDefensa_anteproyecto();
         Boolean getPrerequisitos_nivel2();
         Boolean getAsistencia_tutorias();

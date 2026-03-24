@@ -12,7 +12,6 @@ public class DashboardStatusDTO {
     private boolean prerequisitosNivel1;
     private boolean temaSeleccionado;
     private boolean directorAsignado;
-    private boolean reunionesMinimas;
     private boolean defensaAnteproyecto;
 
     // Nivel 2
