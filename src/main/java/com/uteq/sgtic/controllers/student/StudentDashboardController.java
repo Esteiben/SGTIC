@@ -1,28 +1,34 @@
 package com.uteq.sgtic.controllers.student;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.uteq.sgtic.dtos.student.mainDashboard.DashboardStatusDTO;
 import com.uteq.sgtic.services.student.IStudentDashboardService;
 import com.uteq.sgtic.services.student.selectTopic.IProcessSetupService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/student/dashboard")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Lo agregamos para mantener consistencia con tu frontend
+@CrossOrigin(origins = "*")
+
 public class StudentDashboardController {
 
     private final IStudentDashboardService dashboardService;
-    private final IProcessSetupService processSetupService; // Lo usamos para extraer el ID seguro
+    private final IProcessSetupService processSetupService;
 
     @GetMapping("/status")
     public ResponseEntity<DashboardStatusDTO> getStatus(
             @RequestParam Integer periodoId,
-            Authentication authentication // Spring inyecta al usuario logueado automáticamente
+            Authentication authentication
     ) {
-        // Obtenemos el ID real del estudiante basado en su token JWT
         Integer estudianteIdReal = processSetupService.getIdEstudianteByUsername(authentication.getName());
         
         DashboardStatusDTO status = dashboardService.getDashboardStatus(estudianteIdReal, periodoId);

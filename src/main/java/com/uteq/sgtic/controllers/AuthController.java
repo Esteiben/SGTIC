@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.security.Principal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -25,6 +27,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         log.info("Login attempt for email: {}", request.getEmail());
+        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
+            user.setLastLogin(LocalDateTime.now());
+            userRepository.save(user);
+        });
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
