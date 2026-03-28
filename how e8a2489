@@ -1,0 +1,34 @@
+[33me8a2489[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;32mrespaldo-funcional[m[33m)[m HEAD@{0}: reset: moving to e8a2489
+[33mfb110da[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: merge origin/master: Fast-forward
+[33me8a2489[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;32mrespaldo-funcional[m[33m)[m HEAD@{2}: reset: moving to e8a2489
+[33mfb110da[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: pull: Fast-forward
+[33me8a2489[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;32mrespaldo-funcional[m[33m)[m HEAD@{4}: commit: correción conexion con la base de datos secundaria
+[33m7b6dd5d[m HEAD@{5}: commit: conexion con azure corregida
+[33m21e40dd[m HEAD@{6}: commit: respaldos arreglados
+[33m2a4db61[m HEAD@{7}: commit: mejora de reportes y corrección de validaciones de la propuesta de trabajo
+[33m8bc5da7[m HEAD@{8}: commit: prueba git recuperado
+[33m9ec4c07[m HEAD@{9}: reset: moving to 9ec4c07
+[33m6336003[m HEAD@{10}: commit: Agregado módulo de reportes y descarga PDF
+[33m6749049[m HEAD@{11}: pull origin master: Fast-forward
+[33m9ec4c07[m HEAD@{12}: reset: moving to 9ec4c07
+[33m6749049[m HEAD@{13}: commit (merge): Merge remote-tracking branch 'origin/master'
+[33m9ec4c07[m HEAD@{14}: commit: segunda subida
+[33m9a82df0[m HEAD@{15}: commit: corrección del banco de temas 01
+[33md6bd035[m HEAD@{16}: commit: Corrección del solicitar acceso
+[33mec5eb34[m HEAD@{17}: pull: Fast-forward
+[33mcda743f[m HEAD@{18}: commit (merge): Merge branch 'master' of https://github.com/Esteiben/SGTIC
+[33mced2d14[m HEAD@{19}: commit: Corrección de los ID en el flujo del proyecto
+[33m8e03f7a[m HEAD@{20}: commit (merge): Resuelve conflictos de fusión con rama remota
+[33m1e0121a[m HEAD@{21}: commit: Correccion respaldos
+[33m938a8d9[m HEAD@{22}: rebase (finish): returning to refs/heads/master
+[33m938a8d9[m HEAD@{23}: rebase (continue): Descripción de los cambios (sin secretos)
+[33m2fec580[m HEAD@{24}: pull --rebase origin master (start): checkout 2fec58009e3bae7d87572686fe377bd5aa1117fd
+[33mff50087[m HEAD@{25}: rebase (abort): returning to refs/heads/master
+[33med6cefc[m HEAD@{26}: commit: Descripción de los cambios (sin secretos)
+[33mafe6cfd[m HEAD@{27}: reset: moving to HEAD~2
+[33m2fec580[m HEAD@{28}: rebase (start): checkout origin/master
+[33mff50087[m HEAD@{29}: commit: Descripción de los cambios (sin secretos)
+[33m72c6748[m HEAD@{30}: reset: moving to HEAD~2
+[33md961a5a[m HEAD@{31}: commit (merge): Merge branch 'master' of https://github.com/Esteiben/SGTIC
+[33m10bba86[m HEAD@{32}: commit: Arreglo de matriculaciones y funciones
+[33m72c6748[m HEAD@{33}: clone: from https://github.com/Esteiben/SGTIC.git
