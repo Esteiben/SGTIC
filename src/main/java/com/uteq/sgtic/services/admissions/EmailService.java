@@ -75,7 +75,8 @@ public class EmailService {
               <h2 style="color:#1b5e20;margin:0;font-size:24px;">¡Solicitud Aprobada!</h2>
             </div>
 
-            <p style="color:#374151;font-size:15px;line-height:1.6;">¡Felicidades <strong>%s</strong>!</p>
+            <p style="color:#374151;font-size:15px;line-height:1.6;">¡Felicidades <strong>""" + nombreEstudiante + """
+            </strong>!</p>
             <p style="color:#374151;font-size:15px;line-height:1.6;">
               Tu solicitud ha sido <strong style="color:#1b5e20;">ACEPTADA</strong> por el coordinador.
               Ya puedes ingresar al sistema web de titulación.
@@ -85,14 +86,16 @@ public class EmailService {
               <p style="color:#166534;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 16px 0;">
                 🔐 Tus credenciales temporales
               </p>
-              <table width="100%%" cellpadding="8" cellspacing="0">
+              <table width="100%" cellpadding="8" cellspacing="0">
                 <tr>
                   <td style="color:#6b7280;font-size:14px;width:120px;">Usuario:</td>
-                  <td style="color:#111827;font-weight:600;font-size:14px;">%s</td>
+                  <td style="color:#111827;font-weight:600;font-size:14px;">""" + username + """
+                  </td>
                 </tr>
                 <tr>
                   <td style="color:#6b7280;font-size:14px;">Contraseña:</td>
-                  <td style="color:#111827;font-weight:600;font-size:14px;">%s</td>
+                  <td style="color:#111827;font-weight:600;font-size:14px;">""" + password + """
+                  </td>
                 </tr>
               </table>
             </div>
@@ -104,7 +107,7 @@ public class EmailService {
             </div>
 
             <p style="color:#6b7280;font-size:14px;margin:0;">Atentamente,<br><strong style="color:#1b5e20;">SGTIC - Sistema de Gestión de Titulación</strong></p>
-        """.formatted(nombreEstudiante, username, password);
+        """;
 
         enviar(destinatario, "✅ SGTIC: Solicitud Aprobada - Credenciales de Acceso", contenido);
     }
