@@ -39,8 +39,11 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Credential credential;
+<<<<<<< HEAD
     @Column(name = "fecha_cierre_forzado")
     private java.util.Date fechaCierreForzado;
+=======
+>>>>>>> master
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

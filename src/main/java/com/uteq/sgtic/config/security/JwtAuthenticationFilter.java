@@ -1,7 +1,10 @@
 package com.uteq.sgtic.config.security;
 
+<<<<<<< HEAD
 import com.uteq.sgtic.repository.UserRepository; // Importamos tu repositorio
 import io.jsonwebtoken.Claims; // Importamos para extraer la fecha
+=======
+>>>>>>> master
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +21,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+<<<<<<< HEAD
 import java.util.Date;
+=======
+>>>>>>> master
 
 @Slf4j
 @Component
@@ -27,12 +33,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+<<<<<<< HEAD
     private final UserRepository userRepository; // 🔥 INYECTAMOS EL REPO PARA CONSULTAR LA BD
+=======
+>>>>>>> master
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
+<<<<<<< HEAD
         return path.startsWith("/chat-socket") || path.startsWith("/api/auth/");
+=======
+        return path.startsWith("/chat-socket");
+>>>>>>> master
     }
 
     @Override
@@ -45,7 +58,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String requestURI = request.getRequestURI();
 
+<<<<<<< HEAD
         log.debug("Processing request: {} - Auth Header present: {}", requestURI, authHeader != null);
+=======
+        log.debug("Processing request: {} - Auth Header present: {}",
+                requestURI, authHeader != null);
+>>>>>>> master
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             log.debug("No Bearer token found, continuing filter chain");
@@ -63,6 +81,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
+<<<<<<< HEAD
 
                     // =================================================================================
                     // 🔥 LÓGICA DE AUDITORÍA Y EXPULSIÓN (EL BOTÓN ROJO) 🔥
@@ -95,12 +114,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         log.warn("Usuario {} no encontrado en la BD durante el chequeo de expulsión.", userEmail);
                     });
 
+=======
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    log.debug("Authentication set for user: {}", userEmail);
+>>>>>>> master
                 } else {
                     log.warn("Invalid JWT token for user: {}", userEmail);
                 }
             }
         } catch (Exception e) {
             log.error("Error processing JWT: {}", e.getMessage());
+<<<<<<< HEAD
             // Si el token expiró u ocurrió otro error, mandamos 401
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o expirado");
             return;
@@ -124,3 +154,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.debug("Authentication set for user: {}", userEmail);
     }
 }
+=======
+        }
+
+        
+        filterChain.doFilter(request, response);
+    }
+}
+>>>>>>> master

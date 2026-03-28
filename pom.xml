@@ -178,6 +178,14 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.2</version>
         </dependency>
+<<<<<<< HEAD
+=======
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+>>>>>>> master
     </dependencies>
 
     <build>

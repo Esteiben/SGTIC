@@ -5,7 +5,7 @@ import com.uteq.sgtic.dtos.LoginResponseDTO;
 import com.uteq.sgtic.dtos.NewPasswordDTO;
 import com.uteq.sgtic.repository.UserRepository;
 import com.uteq.sgtic.services.IAuthService;
-import jakarta.servlet.http.HttpServletRequest; // IMPORTANTE: Usamos jakarta en Spring Boot 3
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Slf4j
@@ -31,8 +30,10 @@ public class AuthController {
     public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request, HttpServletRequest httpRequest) {
         log.info("Login attempt for email: {}", request.getEmail());
 
+        // Autenticación principal
         LoginResponseDTO response = authService.authenticate(request);
 
+        // Captura de IP y User Agent para auditoría
         String ipAddress = getClientIp(httpRequest);
         String userAgent = httpRequest.getHeader("User-Agent");
         if (userAgent != null && userAgent.length() > 250) {
@@ -40,24 +41,26 @@ public class AuthController {
         }
 
         String finalUserAgent = userAgent;
-        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
 
-            // 1. aplicamos "el perdón" y actualizamos el último acceso directo con sql
-            String sqlUpdate = "update public.usuario set ultimo_acceso = now(), fecha_cierre_forzado = null where id_usuario = ?";
+        userRepository.findByEmail(request.getEmail()).ifPresent(user -> {
+            // 1. ACTUALIZACIÓN DIRECTA (EL PERDÓN)
+            // Usamos SQL nativo para no disparar eventos innecesarios de Hibernate
+            // y limpiar baneos (fecha_cierre_forzado)
+            String sqlUpdate = "UPDATE public.usuario SET ultimo_acceso = NOW(), fecha_cierre_forzado = NULL WHERE id_usuario = ?";
             try {
                 jdbcTemplate.update(sqlUpdate, user.getId());
-                log.info("se limpió el baneo y se actualizó el acceso para el usuario id: {}", user.getId());
+                log.info("Acceso actualizado y baneo limpiado para usuario ID: {}", user.getId());
             } catch (Exception e) {
-                log.error("error al aplicar el perdón en la bd: {}", e.getMessage());
+                log.error("Error al actualizar acceso en BD: {}", e.getMessage());
             }
 
-            // 2. guardamos la ip en la auditoría
-            String sqlInsert = "insert into public.audit_login (id_usuario, exitoso, ip_address, user_agent) values (?, true, cast(? as inet), ?)";
+            // 2. REGISTRO EN AUDIT_LOGIN
+            String sqlInsert = "INSERT INTO public.audit_login (id_usuario, exitoso, ip_address, user_agent) VALUES (?, true, CAST(? AS inet), ?)";
             try {
                 jdbcTemplate.update(sqlInsert, user.getId(), ipAddress, finalUserAgent);
-                log.info("auditoría de ip guardada exitosamente para: {}", ipAddress);
+                log.info("Auditoría de login guardada para IP: {}", ipAddress);
             } catch (Exception e) {
-                log.error("error al guardar la ip en audit_login: {}", e.getMessage());
+                log.error("Error al guardar en audit_login: {}", e.getMessage());
             }
         });
 
@@ -76,7 +79,6 @@ public class AuthController {
 
         try {
             String email = principal.getName();
-
             Integer userId = userRepository.findCredentialsByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
                     .getUserId();
@@ -87,7 +89,6 @@ public class AuthController {
                     "success", success,
                     "message", "Contraseña actualizada correctamente"
             ));
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,
